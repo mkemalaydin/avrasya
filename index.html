@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avrasya Üniversitesi KİDR-2025 Değerlendirme Sistemi | Eğitim ve Öğretim (B)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root { --bg: #f8fafc; --primary: #0f172a; --accent: #0284c7; --success: #16a34a; --danger: #dc2626; --warning: #d97706; --border: #cbd5e1; }
+        body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); margin: 0; padding: 20px; line-height: 1.6; color: #334155; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        @media print {
+            body { background: white; padding: 0; margin: 0; }
+            .container { max-width: 100%; margin: 0; padding: 0; }
+            .nav-panel { display: none !important; }
+            .layout { display: block !important; }
+            .sidebar { display: none !important; }
+            .section-card { page-break-inside: avoid; break-inside: avoid; margin: 0; border: none; box-shadow: none; }
+            .sub-item { page-break-inside: avoid; break-inside: avoid; border-color: #e2e8f0; }
+            .btn-save, .btn-score, .suggestion-box, .interactive-panel, .evidence-box, .rte-toolbar { display: none !important; }
+            .section-body, .sub-body { display: block !important; }
+            .toggle-icon { display: none !important; }
+        }
+        
+        /* PDF Export Styles */
+        .pdf-report { font-family: 'Segoe UI', Arial, sans-serif; color: #1f2937; }
+        .pdf-header { background: #0f172a; color: white; padding: 30px; text-align: center; border-bottom: 4px solid #0284c7; }
+        .pdf-header h1 { margin: 0; font-size: 26px; font-weight: 800; }
+        .pdf-header p { margin: 8px 0 0 0; font-size: 13px; opacity: 0.9; }
+        .pdf-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 20px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; }
+        .pdf-meta-item { text-align: center; }
+        .pdf-meta-label { font-size: 11px; color: #64748b; font-weight: 700; text-transform: uppercase; }
+        .pdf-meta-value { font-size: 18px; font-weight: 800; color: #0f172a; margin-top: 4px; }
+        .pdf-section { margin-bottom: 30px; }
+        .pdf-section-title { font-size: 15px; font-weight: bold; color: white; background: #1e293b; padding: 10px 15px; margin-bottom: 15px; border-left: 4px solid #0284c7; display: flex; justify-content: space-between; }
+        .pdf-item { border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px; margin-bottom: 12px; background: white; page-break-inside: avoid; }
+        .pdf-item-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .pdf-item-name { font-weight: 700; font-size: 13px; color: #0f172a; max-width: 80%; }
+        .pdf-item-score { font-weight: bold; font-size: 14px; padding: 4px 10px; background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; border-radius: 4px; }
+        .pdf-item-comment { font-size: 11px; color: #475569; line-height: 1.6; margin-top: 8px; padding: 10px; background: #f8fafc; border-radius: 4px; border: 1px dashed #cbd5e1; word-wrap: break-word; }
+        .pdf-item-comment a { color: #0284c7; text-decoration: underline; font-weight: bold; }
+        .pdf-overall { background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 6px; padding: 15px; margin-top: 20px; }
+        .pdf-overall-title { font-weight: 800; color: #0369a1; margin-bottom: 8px; font-size: 13px; text-transform: uppercase; }
+        .pdf-overall-text { font-size: 12px; color: #0c4a6e; line-height: 1.6; word-wrap: break-word; }
+        .pdf-overall-text a { color: #0284c7; text-decoration: underline; font-weight: bold; }
+        
+        /* App UI Styles */
+        .nav-panel { background: white; padding: 20px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); display: flex; align-items: center; gap: 20px; border-top: 4px solid var(--accent); flex-wrap: wrap; }
+        .nav-group { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 300px; }
+        .nav-panel select, .nav-panel input { padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem; flex: 1; outline: none; font-family: inherit; }
+        .nav-panel select { background: #f8fafc; font-weight: 600; cursor: pointer; }
+        .nav-panel select:focus, .nav-panel input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1); }
+
+        .layout { display: grid; grid-template-columns: 1fr 350px; gap: 30px; align-items: start; }
+        main { min-width: 0; } 
+        
+        /* Accordion (Açılır/Kapanır) Stilleri */
+        .section-card { background: white; border-radius: 12px; padding: 30px; margin-bottom: 30px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.02); transition: all 0.3s ease; }
+        .section-header { border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; transition: background 0.2s; border-radius: 8px; padding: 10px; margin-left: -10px; margin-right: -10px; }
+        .section-header:hover { background: #f8fafc; }
+        .section-title { font-size: 1.3rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .section-score { font-size: 1.2rem; font-weight: 800; color: var(--accent); background: #f0f9ff; padding: 4px 16px; border-radius: 8px; border: 1px solid #bae6fd; }
+        .section-body { display: block; padding-top: 10px; }
+        .section-card.collapsed .section-body { display: none; }
+        .section-card.collapsed .section-header { border-bottom: none; margin-bottom: 0; }
+        
+        .sub-item { border: 1px solid #f1f5f9; border-radius: 10px; padding: 25px; margin-bottom: 30px; background: #ffffff; transition: 0.2s; }
+        .sub-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 12px; color: var(--primary); cursor: pointer; user-select: none; display: flex; align-items: center; gap: 10px; padding-top: 5px; padding-bottom: 5px; border-radius: 0 6px 6px 0; transition: background 0.2s; }
+        .sub-title:hover { background: #f8fafc; }
+        .sub-body { display: block; padding-top: 10px; }
+        .sub-item.collapsed .sub-body { display: none; }
+        .sub-item.collapsed { padding-bottom: 10px; }
+        
+        .toggle-icon { font-size: 0.8rem; color: #94a3b8; transition: transform 0.3s ease; }
+        .collapsed > .section-header .toggle-icon, .collapsed > .sub-title .toggle-icon { transform: rotate(-90deg); }
+        .checklist-container.collapsed .toggle-icon { transform: rotate(-90deg); }
+
+        /* Likert Checklist & Dynamic Suggestion */
+        .interactive-panel { display: grid; grid-template-columns: 1fr 280px; gap: 20px; margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .checklist-container h4 { margin: 0 0 15px 0; font-size: 0.9rem; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; padding: 10px; border-radius: 6px; margin-left: -10px; margin-right: -10px; transition: background 0.2s; }
+        .checklist-container h4:hover { background: #f8fafc; }
+        .checklist-container .check-items-list { display: block; }
+        .checklist-container.collapsed .check-items-list { display: none; }
+        .check-item { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 10px; padding: 10px; background: white; border: 1px solid #e2e8f0; border-radius: 6px; }
+        .check-text { font-size: 0.85rem; color: #334155; line-height: 1.4; flex: 1; }
+        .likert-group { display: flex; gap: 4px; }
+        .likert-group input[type="radio"] { display: none; }
+        .likert-group label { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 6px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: 0.2s; color: #64748b; background: #f8fafc; }
+        .likert-group label:hover { border-color: var(--accent); color: var(--accent); }
+        .likert-group input[type="radio"]:checked + label { background: var(--accent); border-color: var(--accent); color: white; box-shadow: 0 2px 4px rgba(2, 132, 199, 0.2); }
+        
+        .suggestion-box { background: white; border: 2px solid var(--border); border-radius: 8px; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: 0.3s; }
+        .suggestion-box.active { border-color: var(--accent); box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1); }
+        .sugg-label { font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
+        .sugg-value { font-size: 2.5rem; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 10px; transition: 0.3s; }
+        .btn-apply-sugg { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; opacity: 0.5; pointer-events: none; transition: 0.2s; }
+        .suggestion-box.active .btn-apply-sugg { opacity: 1; pointer-events: auto; }
+        .suggestion-box.active .btn-apply-sugg:hover { background: #0369a1; transform: translateY(-1px); }
+
+        /* Main Score Buttons */
+        .score-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; }
+        .btn-score { flex: 1; height: 45px; border-radius: 8px; border: 1px solid var(--border); background: #ffffff; font-weight: 800; cursor: pointer; transition: all 0.2s; font-size: 1.1rem; color: #475569; }
+        .btn-score:hover { border-color: var(--accent); color: var(--accent); background: #f0f9ff; }
+        .btn-score.active { color: white; border-color: transparent; }
+        .btn-score.active.lv5 { background: var(--success); }
+        .btn-score.active.lv4 { background: #84cc16; }
+        .btn-score.active.lv3 { background: var(--accent); }
+        .btn-score.active.lv2 { background: var(--warning); }
+        .btn-score.active.lv1 { background: var(--danger); }
+
+        .rubric-table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 20px; font-size: 0.8rem; background: white; table-layout: fixed; }
+        .rubric-table th, .rubric-table td { border: 1px solid var(--border); padding: 12px; text-align: left; vertical-align: top; line-height: 1.5; }
+        .rubric-table th { background: #f1f5f9; color: #0f172a; font-weight: 700; text-align: center; }
+        .rubric-table td { color: #475569; }
+        .rubric-table td b { display: block; margin-bottom: 6px; font-size: 0.9rem; color: var(--primary); text-align: center; background: #f8fafc; padding: 4px; border-radius: 4px; border: 1px solid #e2e8f0; }
+        .rubric-table td.selected-level { background-color: #f0fdf4; border-color: #bbf7d0; color: #166534; box-shadow: inset 0 0 0 2px #22c55e; }
+        .rubric-table td.selected-level b { background-color: #dcfce7; color: #166534; border-color: #86efac; }
+
+        /* Zengin Metin (Rich Text) Editörü Stilleri */
+        .rte-container { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: 15px; background: white; transition: 0.2s; }
+        .rte-container:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1); }
+        .rte-toolbar { background: #f8fafc; padding: 8px 12px; border-bottom: 1px solid var(--border); display: flex; gap: 8px; flex-wrap: wrap; }
+        .rte-btn { background: white; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 0.85rem; color: #475569; font-weight: 600; display: flex; align-items: center; gap: 4px; transition: 0.2s; }
+        .rte-btn:hover { background: #f1f5f9; color: var(--accent); border-color: var(--accent); }
+        
+        .comment-area { width: 100%; box-sizing: border-box; padding: 15px; min-height: 120px; font-family: inherit; font-size: 0.9rem; line-height: 1.6; background: white; overflow-y: auto; overflow-x: hidden; cursor: text; white-space: pre-wrap; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; outline: none; border: none; }
+        .comment-area:empty:before { content: attr(data-placeholder); color: #94a3b8; pointer-events: none; display: block; }
+        .comment-area a { color: #0284c7 !important; text-decoration: underline !important; font-weight: 600; cursor: pointer; word-break: break-all; }
+        .comment-area * { max-width: 100%; font-size: inherit !important; font-family: inherit !important; background: transparent !important; margin-top: 0; white-space: pre-wrap !important; overflow-wrap: break-word !important; word-break: break-word !important; }
+
+        /* Dynamic Evidence Box */
+        .evidence-box { background: #f8fafc; border: 2px dashed #94a3b8; border-radius: 8px; padding: 15px; margin-top: 15px; transition: all 0.3s ease; }
+        .evidence-box label { font-size: 0.9rem; font-weight: 600; color: var(--primary); display: block; margin-bottom: 8px; transition: all 0.3s ease; display: flex; align-items: center; gap: 8px; }
+        .preview-container { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+
+        #image-modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 2000; justify-content: center; align-items: center; padding: 40px; }
+        #image-modal img { max-width: 100%; max-height: 100%; border-radius: 8px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        .modal-close { position: absolute; top: 20px; right: 30px; color: white; font-size: 2.5rem; cursor: pointer; font-weight: bold; background: none; border: none; transition: 0.2s; }
+        .modal-close:hover { color: #ef4444; }
+
+        /* Sidebar */
+        .sidebar { position: sticky; top: 20px; }
+        .score-panel { background: var(--primary); color: white; padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .grand-total { font-size: 4.5rem; font-weight: 900; margin: 10px 0; line-height: 1; color: #f8fafc; }
+        .total-max { font-size: 1.2rem; color: #94a3b8; font-weight: 600; display: block; margin-bottom: 15px; }
+        .status-badge { padding: 8px 24px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; display: inline-block; margin-bottom: 20px; letter-spacing: 1px; }
+        
+        .summary-list { text-align: left; margin-top: 20px; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px dashed rgba(255,255,255,0.1); }
+        .summary-row span { color: #cbd5e1; font-weight: 500; }
+        .summary-row b { color: white; font-size: 1.05rem; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 6px; }
+        
+        .btn-save { width: 100%; background: var(--success); color: white; border: none; padding: 16px; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 1rem; margin-top: 25px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-save:hover { background: #15803d; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3); }
+
+        #loader { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9); color: white; align-items: center; justify-content: center; z-index: 1000; font-size: 1.2rem; font-weight: 600; flex-direction: column; gap: 15px; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.2); border-radius: 50%; border-top-color: white; animation: spin 1s ease-in-out infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    
+.toolbar{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:12px 18px;margin-bottom:20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;position:sticky;top:8px;z-index:50;box-shadow:0 4px 10px rgba(15,23,42,.06)}
+.tb-btn{background:#f1f5f9;border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-weight:600;font-size:.82rem;cursor:pointer;color:#334155;font-family:inherit}.tb-btn:hover,.tb-btn.on{border-color:var(--accent);color:var(--accent);background:#f0f9ff}
+.prog{flex:1;min-width:180px}.prog-bar{height:8px;background:#e2e8f0;border-radius:6px;overflow:hidden}.prog-fill{height:100%;width:0;background:var(--accent);transition:width .3s}.prog small{color:#64748b;font-size:.78rem}
+.sub-item.done .sub-title:after{content:"✓";color:var(--success);margin-left:auto;font-weight:900}.hide-done .sub-item.done{display:none}
+.claim{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:12px;background:#ede9fe;color:#5b21b6;white-space:nowrap}.chip{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:12px;white-space:nowrap}
+.chip.up{background:#dcfce7;color:#166534}.chip.down{background:#fee2e2;color:#991b1b}.chip.eq{background:#e0f2fe;color:#075985}
+.kidr{border:1px solid #ddd6fe;background:#faf8ff;border-radius:10px;margin-bottom:16px}.kidr>summary{cursor:pointer;padding:10px 14px;font-weight:700;color:#5b21b6;font-size:.9rem;list-style:none}.kidr>summary:before{content:"▸ "}.kidr[open]>summary:before{content:"▾ "}
+.kidr-in{padding:4px 16px 14px;font-size:.86rem;max-height:460px;overflow:auto}.kidr-in p{margin:0 0 10px}.kidr-od{background:#ede9fe;border-radius:8px;padding:8px 12px;margin-bottom:10px;color:#4c1d95;font-weight:600}
+.od{display:inline-block;font-size:.68rem;font-weight:800;padding:0 6px;border-radius:8px;background:#ddd6fe;color:#4c1d95;vertical-align:middle}.od.d3{background:#bae6fd;color:#075985}
+.ev-list{margin:6px 0 0;padding:0;list-style:none}.ev-list li{padding:4px 0;border-top:1px dashed #ddd6fe;word-break:break-all}.ev-none{background:#fef3c7;color:#92400e;border-radius:8px;padding:8px 12px;font-weight:600}
+.sb-cmp{margin-top:14px;font-size:.8rem;color:#cbd5e1;border-top:1px solid rgba(255,255,255,.1);padding-top:12px;text-align:left}.sb-cmp b{color:#fff}
+.draft{background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;padding:10px 16px;margin-bottom:16px;display:none;align-items:center;gap:12px;font-size:.88rem}
+@media print{.toolbar,.kidr,.draft,.chip,.claim,.sb-cmp{display:none!important}}
+</style>
+</head>
+<body>
+
+<div id="loader">
+    <div class="spinner"></div>
+    <div id="loader-text">İşlem Yapılıyor...</div>
+</div>
+
+<div id="image-modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <img id="modal-img" src="">
+</div>
+
+<div class="container">
+    <div class="nav-panel">
+        <div class="nav-group">
+            <b>Veritabanı:</b>
+            <select id="project-selector" onchange="handleProjectSelection()">
+                <option value="NEW">-- Yeni Değerlendirme Formu --</option>
+            </select>
+        </div>
+        <div class="nav-group">
+            <b>Kurum/Birim ID:</b>
+            <input type="text" id="proj-no" placeholder="Örn: AVU-KIDR-2025-B" value="AVU-KIDR-2025-B" style="max-width: 150px;">
+            <b>Program/Bölüm Adı:</b>
+            <input type="text" id="proj-name" placeholder="Değerlendirilen Kurum" value="Avrasya Üniversitesi - KİDR 2025 (B. Eğitim ve Öğretim)">
+        </div>
+    </div>
+
+    <div class="layout">
+        <main id="main-content"></main>
+        
+        <aside class="sidebar">
+            <div class="score-panel">
+                <h3 style="margin-top:0; color:#cbd5e1; font-size:0.9rem; text-transform:uppercase;">Toplam Puan</h3>
+                <div class="grand-total" id="grand-total">0</div>
+                <span class="total-max" id="total-max-lbl">/ 400 Puan</span>
+                <div id="status-badge" class="status-badge" style="background: var(--danger);">GELİŞTİRİLMELİ</div>
+                
+                <div id="summary-list" class="summary-list"></div>
+                
+                <button class="btn-save" onclick="saveData()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                    KAYDET & AKTAR
+                </button>
+                <button class="btn-save" style="background:var(--accent); margin-top:12px;" onclick="exportPDF()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    PDF RAPORU AL
+                </button>
+            </div>
+        </aside>
+    </div>
+</div>
+
+<script>
+// ==========================================
+// KENDİ WEB APP URL'Nİ BURAYA YAPIŞTIR
+// ==========================================
+const GOOGLE_APP_URL = "https://script.google.com/macros/s/AKfycbwaiafs0KmIzf__dVyKhPXl1k1J2wLuPZlrmqdSy76_El4Uiar9oxTKF1p6s4wEZbsUBw/exec";
+const IMGBB_API_KEY = "cbc42adcd1c112c6d5a9e92eaedc4c56";
+const IMGBB_UPLOAD_URL = "https://api.imgbb.com/1/upload";
+
+let currentAttachments = {};
+let activeEvidenceBox = null;
+
+const rubricData = [
+    {
+        title: "B.1. Program Tasarımı, Değerlendirmesi ve Güncellenmesi", maxWeight: 140, 
+        items: [
+            {
+                id: "B.1.1", name: "Programların tasarımı ve onayı",
+                levels: [
+                    "Kurumda programların tasarımı ve onayına ilişkin süreçler tanımlanmamıştır.",
+                    "Kurumda programların tasarımı ve onayına ilişkin ilke, yöntem, TYYÇ ile uyum ve paydaş katılımını içeren tanımlı süreçler bulunmaktadır.",
+                    "Kurumun genelinde, programlar, tanımlı süreçler doğrultusunda; programların amaç ve öğrenme çıktılarına uygun olarak yürütülmektedir.",
+                    "Programların tasarım ve onay süreçleri sistematik olarak izlenmekte ve ilgili paydaşlarla birlikte değerlendirilerek iyileştirilmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Program amaçları oluşturulmuştur", 
+                    "Program çıktıları tanımlanmıştır", 
+                    "TYYÇ uyumu gösterilmiştir", 
+                    "Program amaç ve çıktıları kamuoyuna ilan edilmiştir", 
+                    "Program yeterlilikleri belirlenirken kurumun misyon ve vizyonu dikkate alınmıştır", 
+                    "Ders bilgi paketleri varsa ulusal çekirdek program ve akreditasyon ölçütleri dikkate alınarak hazırlanmıştır", 
+                    "Kazanımlar bilişsel, duyuşsal ve devinimsel düzeyleri ifade etmektedir", 
+                    "Program çıktılarının gerçekleşmesinin nasıl izleneceği tanımlanmıştır", 
+                    "Kurumsal ortak çıktılar ile alan yeterliliklerinin değerlendirme yöntemi belirlenmiştir", 
+                    "Öğrenme çıktılarının yapılandırılmasına ilişkin bölüm bazlı ilke ve kurallar bulunmaktadır", 
+                    "Program yeterliliklerinin hangi eylemlerle kazandırılacağı belirlenmiştir", 
+                    "Yeterliliklerin örgün, karma ve uzaktan eğitimde nasıl kazandırılacağı tanımlıdır", 
+                    "Program tasarımında fiziksel ve teknolojik olanaklar dikkate alınmaktadır", 
+                    "Tanımlı süreçler kurum genelinde uygulanmaktadır", 
+                    "Program tasarım süreçleri izlenmektedir", 
+                    "İzleme sonuçlarına göre güncellemeler yapılmaktadır", 
+                    "Program tasarımı kurumsal kültüre dönüşmüştür", 
+                    "Kuruma özgü örnek gösterilebilir uygulamalar bulunmaktadır"
+                ]
+            },
+            {
+                id: "B.1.2", name: "Programın ders dağılım dengesi",
+                levels: [
+                    "Ders dağılımı dengesine ilişkin tanımlı süreçler tanımlanmamıştır.",
+                    "Ders dağılımına ilişkin; uzmanlık alanı, zorunlu-seçmeli, genel kültür boyutlarına yönelik ilke ve yöntemleri içeren tanımlı süreçler bulunmaktadır.",
+                    "Ders dağılımı dengesine ilişkin tanımlı süreçlere uygun olarak kurum genelinde uygulamalar bulunmaktadır.",
+                    "Programlarda ders dağılım dengesi izlenmekte ve iyileştirilmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Ders dağılımına ilişkin ilke, kural ve yöntemler tanımlıdır.", 
+                    "Ders dağılımında öğretim elemanlarının uzmanlık alanları dikkate alınmaktadır.", 
+                    "Zorunlu-seçmeli ders dengesi gözetilmektedir.", 
+                    "Alan ve alan dışı ders dengesi gözetilmektedir.", 
+                    "Kültürel derinlik ve farklı disiplinleri tanıma imkanı sağlanmaktadır.", 
+                    "Ders sayısı ve haftalık ders yükü öğrencinin akademik olmayan etkinliklerine zaman ayırmasına imkân verecek şekilde planlanmıştır.", 
+                    "Ders bilgi paketlerinin amaca uygunluğu ve işlerliği izlenmektedir.", 
+                    "Ders dağılımına ilişkin tanımlı süreçler kurum genelinde uygulanmaktadır.", 
+                    "Ders dağılım dengesi öğrenci, mezun ve dış paydaş görüşleriyle izlenmektedir.", 
+                    "İzleme sonuçlarına göre ders planlarında iyileştirme yapılmaktadır.", 
+                    "Ders dağılım dengesi uygulamaları kurum kültürü haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ]
+            },
+            {
+                id: "B.1.3", name: "Ders kazanımlarının program çıktılarıyla uyumu",
+                levels: [
+                    "Ders kazanımları program çıktıları ile eşleştirilmemiştir.",
+                    "Ders kazanımlarının oluşturulması ve program çıktılarıyla uyumlu hale getirilmesine ilişkin ilke, yöntem ve sınıflamaları içeren tanımlı süreçler bulunmaktadır.",
+                    "Ders kazanımları programların genelinde program çıktılarıyla uyumlandırılmıştır ve ders bilgi paketleri ile paylaşılmaktadır.",
+                    "Ders kazanımlarının program çıktılarıyla uyumu izlenmekte ve iyileştirilmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Derslerin öğrenme kazanımları tanımlanmıştır.", 
+                    "Karma ve uzaktan eğitim dersleri için de öğrenme kazanımları tanımlanmıştır.", 
+                    "Program çıktıları ile ders kazanımları eşleştirilmiştir.", 
+                    "Ders kazanımları ve program çıktıları kamuoyuna ilan edilmiştir.", 
+                    "Ders kazanımları bilişsel, duyuşsal ve devinimsel seviyeleri ifade etmektedir.", 
+                    "Ders kazanımlarının gerçekleşmesinin nasıl izleneceği tanımlanmıştır.", 
+                    "Kurumsal ortak çıktılar ve alan yeterliliklerinin değerlendirme yöntemleri belirlenmiştir.", 
+                    "Ders kazanımlarının oluşturulması ve program çıktılarıyla uyumlu hale getirilmesine ilişkin ilke, yöntem ve sınıflamaları içeren süreçler tanımlanmıştır.", 
+                    "Ders kazanımları programların genelinde program çıktılarıyla uyumlandırılmıştır.", 
+                    "Ders bilgi paketleri kurum genelinde paylaşılmaktadır.", 
+                    "Program dışından alınan derslerin program çıktılarıyla uyumu sağlanmaktadır.", 
+                    "Ders kazanımlarının program çıktılarıyla uyumu izlenmektedir.", 
+                    "İzleme sonuçlarına göre iyileştirmeler yapılmaktadır.", 
+                    "Ders kazanımı-program çıktısı uyumu kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ]
+            },
+            {
+                id: "B.1.4", name: "Öğrenci iş yüküne dayalı ders tasarımı",
+                levels: [
+                    "Dersler öğrenci iş yüküne dayalı olarak tasarlanmamıştır.",
+                    "Öğrenci iş yükünün hesaplanmasına ilişkin, staj ve hareketlilik gibi boyutları içeren tanımlı süreçler bulunmaktadır.",
+                    "Programlarda dersler öğrenci iş yüküne uygun olarak tasarlanmış, ilan edilmiş ve uygulamaya konulmuştur.",
+                    "Dersler öğrenci iş yüküne dayalı olarak izlenmekte ve buna göre ders tasarımı güncellenmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Derslerin AKTS değerleri belirlenmiştir.", 
+                    "AKTS hesaplama yöntemi tanımlanmıştır.", 
+                    "Öğrenci iş yükünün nasıl hesaplanacağı belirlenmiştir.", 
+                    "Staj, uygulama, proje ve saha çalışmaları iş yükü kapsamında değerlendirilmektedir.", 
+                    "Öğrenci hareketliliği (Erasmus vb.) ve kredi transfer süreçleri tanımlanmıştır.", 
+                    "Uzaktan ve karma eğitim dersleri için iş yükü hesaplamaları yapılmaktadır.", 
+                    "Öğrenci iş yüküne dayalı ders tasarımı programların genelinde uygulanmaktadır.", 
+                    "AKTS ve iş yükü bilgileri kamuoyuna ilan edilmiştir.", 
+                    "Öğrenci iş yükünün belirlenmesinde öğrenci katılımı sağlanmaktadır.", 
+                    "Öğrenci iş yükü düzenli olarak izlenmektedir.", 
+                    "İzleme sonuçlarına göre AKTS ve iş yükleri güncellenmektedir.", 
+                    "Uygulama kurum kültürü haline gelmiştir.", 
+                    "Kuruma özgü örnek gösterilebilir uygulamalar bulunmaktadır."
+                ]
+            },
+            {
+                id: "B.1.5", name: "Programların izlenmesi ve güncellenmesi",
+                levels: [
+                    "Program çıktılarının izlenmesine ve güncellenmesine ilişkin mekanizma bulunmamaktadır.",
+                    "Program çıktılarının izlenmesine ve güncellenmesine ilişkin periyot, ilke, kural ve göstergeler oluşturulmuştur.",
+                    "Programların genelinde program çıktılarının izlenmesine ve güncellenmesine ilişkin mekanizmalar işletilmektedir.",
+                    "Program çıktıları bu mekanizmalar ile izlenmekte ve ilgili paydaşların görüşleri de alınarak güncellenmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Program amaçları ve öğrenme çıktılarının izlenmesine ilişkin mekanizma tanımlanmıştır.", 
+                    "Program çıktılarının izlenmesine ilişkin periyotlar belirlenmiştir.", 
+                    "Program çıktılarının değerlendirilmesine ilişkin ilke ve göstergeler belirlenmiştir.", 
+                    "Programların güncellenmesine ilişkin süreç tanımlanmıştır.", 
+                    "Program amaçları ve öğrenme çıktıları programların genelinde izlenmektedir.", 
+                    "Programların genelinde program güncelleme mekanizmaları işletilmektedir.", 
+                    "Eğitim-öğretime ilişkin göstergeler sistematik olarak takip edilmektedir.", 
+                    "Program çıktıları belirlenen mekanizmalarla düzenli olarak izlenmektedir.", 
+                    "Paydaş görüşleri program güncellemelerinde kullanılmaktadır.", 
+                    "İzleme sonuçlarına göre programlarda iyileştirme yapılmaktadır.", 
+                    "Program akreditasyonu kalite geliştirme amacıyla kullanılmaktadır.", 
+                    "Program izleme ve güncelleme süreçleri kurumsal kültür haline gelmiştir.", 
+                    "Akreditasyon ve program değerlendirme sonuçları kurumsal öğrenmeye dönüşmektedir.", 
+                    "Kuruma özgü örnek gösterilebilir uygulamalar bulunmaktadır."
+                ]
+            },
+            {
+                id: "B.1.6", name: "Eğitim ve öğretim süreçlerinin yönetimi",
+                levels: [
+                    "Kurumda eğitim ve öğretim süreçlerini bütüncül olarak yönetmek üzere bir sistem bulunmamaktadır.",
+                    "Kurumda eğitim ve öğretim yönetim sistemine ilişkin ilke ve kurallar bulunmaktadır.",
+                    "Kurumun genelinde eğitim ve öğretim süreçleri belirlenmiş ilkelere uygun bütüncül olarak yönetilmektedir.",
+                    "Kurumda eğitim ve öğretim süreçleri izlenmekte ve izlem sonuçlarına göre iyileştirme yapılmaktadır.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Eğitim ve öğretim süreçlerini yönetmeye yönelik sistem bulunmaktadır.", 
+                    "Eğitim ve öğretim süreçlerine ilişkin organizasyonel yapı oluşturulmuştur.", 
+                    "Eğitim ve öğretim süreçlerinde görev ve sorumluluklar tanımlanmıştır.", 
+                    "Eğitim ve öğretim süreçlerine ilişkin ilke ve kurallar belirlenmiştir.", 
+                    "Eğitim ve öğretim faaliyetlerine ilişkin yıllık takvimler oluşturulmuştur.", 
+                    "Bilgi yönetim sistemi eğitim süreçlerini desteklemektedir.", 
+                    "Eğitim ve öğretim süreçleri kurum genelinde belirlenen ilke ve kurallara uygun yönetilmektedir.", 
+                    "Program tasarımı, yürütülmesi, değerlendirilmesi ve güncellenmesi süreçleri koordineli yürütülmektedir.", 
+                    "Öğretim yöntemi, öğrenme kazanımları ve ölçme-değerlendirme uyumu takip edilmektedir.", 
+                    "Eğitim ve öğretim yönetim sisteminin işleyişi düzenli olarak izlenmektedir.", 
+                    "İzleme sonuçlarına göre iyileştirmeler yapılmaktadır.", 
+                    "Eğitim ve öğretim süreçlerinin koordinasyonu üst yönetim tarafından etkin şekilde takip edilmektedir.", 
+                    "Eğitim ve öğretim süreçleri kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ]
+            }
+        ]
+    },
+    {
+        title: "B.2. Programların Yürütülmesi", maxWeight: 80,
+        items: [
+            {
+                id: "B.2.1", name: "Öğretim yöntem ve teknikleri",
+                levels: [
+                    "Öğrenme-öğretme süreçlerinde öğrenci merkezli uygulamalar bulunmamaktadır.",
+                    "Öğrenci merkezli öğrenme-öğretme süreçlerinde uygulanmasına yönelik ilke, kural ve planlamalar bulunmaktadır.",
+                    "Programların genelinde öğrenci merkezli öğretim yöntem teknikleri tanımlı süreçler doğrultusunda uygulanmaktadır.",
+                    "Öğrenci merkezli yaklaşımın uygulamaları izlenmekte ve paydaşların katılımıyla iyileştirilmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Öğrenci merkezli öğretim yaklaşımına ilişkin ilke ve kurallar belirlenmiştir.", 
+                    "Öğrenci merkezli öğretim yöntemlerinin kullanımına ilişkin planlamalar yapılmıştır.", 
+                    "Aktif ve etkileşimli öğretim yöntemleri tanımlanmıştır.", 
+                    "Yetkinlik temelli öğretim yaklaşımı benimsenmiştir.", 
+                    "Uzaktan ve karma eğitim için öğretim yöntemleri tanımlanmıştır.", 
+                    "Öğrenci merkezli öğretim yöntemleri programların genelinde uygulanmaktadır.", 
+                    "Ders bilgi paketlerinde öğrenci merkezli yöntemler yer almaktadır.", 
+                    "Ters yüz öğrenme, proje tabanlı öğrenme, vaka analizi, problem temelli öğrenme gibi uygulamalar kullanılmaktadır.", 
+                    "Öğrencilerin araştırma süreçlerine katılımı desteklenmektedir.", 
+                    "Öğrenci merkezli uygulamalar izlenmektedir.", 
+                    "İç paydaş görüşleri doğrultusunda iyileştirmeler yapılmaktadır.", 
+                    "Öğretim yöntemlerinin etkililiği değerlendirilmektedir.", 
+                    "Öğrenci merkezli öğrenme kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir öğretim uygulamaları bulunmaktadır."
+                ]
+            },
+            {
+                id: "B.2.2", name: "Ölçme ve değerlendirme",
+                levels: [
+                    "Kurumda öğrenci merkezli ölçme ve değerlendirme yaklaşımları bulunmamaktadır.",
+                    "Öğrenci merkezli ölçme ve değerlendirmeye ilişkin ilke, kural ve planlamalar bulunmaktadır.",
+                    "Programların genelinde öğrenci merkezli ölçme ve değerlendirme uygulamaları bulunmaktadır.",
+                    "Öğrenci merkezli ölçme ve değerlendirme uygulamaları izlenmekte ve ilgili iç paydaşların katılımıyla iyileştirilmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir, çeşitlendirilmiş ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Öğrenci merkezli ölçme ve değerlendirme yaklaşımı tanımlanmıştır.", 
+                    "Ölçme ve değerlendirmeye ilişkin ilke, kural ve planlamalar bulunmaktadır.", 
+                    "Ders kazanımlarına uygun ölçme araçları tanımlanmıştır.", 
+                    "Örgün, uzaktan ve karma eğitim türlerine uygun ölçme yöntemleri belirlenmiştir.", 
+                    "Öğrencilerin kendilerini ifade edebileceği alternatif ölçme araçları kullanılmaktadır.", 
+                    "Programların genelinde öğrenci merkezli ve çeşitlendirilmiş ölçme-değerlendirme uygulamaları kullanılmaktadır.", 
+                    "Çoklu ölçme araçları sistematik olarak uygulanmaktadır.", 
+                    "Ölçme araçları ders kazanımları ve program yeterlilikleriyle ilişkilendirilmektedir.", 
+                    "Sınav güvenliği mekanizmaları uygulanmaktadır.", 
+                    "Dezavantajlı gruplara yönelik ölçme-değerlendirme düzenlemeleri bulunmaktadır.", 
+                    "Öğrenci merkezli ölçme-değerlendirme uygulamaları izlenmektedir.", 
+                    "Öğrenci ve öğretim elemanı geri bildirimleri doğrultusunda iyileştirmeler yapılmaktadır.", 
+                    "Ölçme ve değerlendirme uygulamalarının tutarlılığı ve güvenirliği değerlendirilmektedir.", 
+                    "Ölçme-değerlendirme sistemi kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir ölçme-değerlendirme uygulamaları bulunmaktadır."
+                ]
+            },
+            {
+                id: "B.2.3", name: "Öğrenci kabulü ve önceki öğrenmenin tanınması",
+                levels: [
+                    "Kurumda öğrenci kabulü, önceki öğrenmenin tanınması ve kredilendirilmesine ilişkin süreçler tanımlanmamıştır.",
+                    "Kurumda öğrenci kabulü, önceki öğrenmenin tanınması ve kredilendirilmesine ilişkin ilke, kural ve bağlı planlar bulunmaktadır.",
+                    "Kurumun genelinde öğrenci kabulü, önceki öğrenmenin tanınması ve kredilendirilmesine ilişkin planlar dahilinde uygulamalar bulunmaktadır.",
+                    "Öğrenci kabulü, önceki öğrenmenin tanınması ve kredilendirilmesine ilişkin süreçler izlenmekte, iyileştirilmekte ve güncellemeler ilan edilmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Öğrenci kabulüne ilişkin ilke ve kurallar tanımlanmıştır.", 
+                    "Önceki öğrenmenin tanınması ve kredilendirilmesine ilişkin ilke ve kurallar belirlenmiştir.", 
+                    "Diploma, sertifika ve belge süreçleri tanımlanmıştır.", 
+                    "Hareketlilik ve kredi transfer süreçleri tanımlanmıştır.", 
+                    "Öğrenci kabulü, tanınma ve kredilendirmeye ilişkin süreçler ilan edilmiştir.", 
+                    "Öğrenci kabulü ve tanınma süreçleri planlanan mekanizmalar doğrultusunda uygulanmaktadır.", 
+                    "Önceki öğrenmenin tanınmasına ilişkin uygulamalar bulunmaktadır.", 
+                    "Hareketlilik süreçlerinde kredi kaybını önleyici uygulamalar işletilmektedir.", 
+                    "Öğrenci kabulü, tanınma ve kredilendirme süreçleri izlenmektedir.", 
+                    "Süreçler paydaş geri bildirimleri doğrultusunda iyileştirilmektedir.", 
+                    "Güncellemeler ve değişiklikler kamuoyuna duyurulmaktadır.", 
+                    "Süreçler kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ]
+            },
+            {
+                id: "B.2.4", name: "Yeterliliklerin sertifikalandırılması ve diploma",
+                levels: [
+                    "Kurumda diploma onayı ve diğer yeterliliklerin sertifikalandırılmasına ilişkin süreçler tanımlanmamıştır.",
+                    "Kurumda diploma onayı ve diğer yeterliliklerin sertifikalandırılmasına ilişkin kapsamlı, tutarlı ve ilan edilmiş ilke, kural ve süreçler bulunmaktadır.",
+                    "Kurumun genelinde diploma onayı ve diğer yeterliliklerin sertifikalandırılmasına ilişkin uygulamalar bulunmaktadır.",
+                    "Uygulamalar izlenmekte ve tanımlı süreçler iyileştirilmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Diploma onayı ve diğer yeterliliklerin sertifikalandırılmasına ilişkin süreçler tanımlanmıştır.", 
+                    "Mezuniyet koşulları açık ve anlaşılır şekilde belirlenmiştir.", 
+                    "Mezuniyet karar süreçleri tanımlanmıştır.", 
+                    "Diploma, diploma eki ve sertifika süreçleri kamuoyuna ilan edilmiştir.", 
+                    "Merkezi yerleştirme dışındaki öğrenci kabul türlerine ilişkin uygulama kriterleri tanımlanmıştır.", 
+                    "Diploma ve sertifikalandırma süreçleri kurum genelinde uygulanmaktadır.", 
+                    "Mezuniyet işlemleri tanımlı süreçlere uygun yürütülmektedir.", 
+                    "Öğrenci iş yüküne dayalı krediler hareketlilik programlarında tanınmaktadır.", 
+                    "Diploma ve sertifikalandırma süreçleri düzenli olarak izlenmektedir.", 
+                    "Süreçlere ilişkin geri bildirimler doğrultusunda iyileştirmeler yapılmaktadır.", 
+                    "Süreçlerde yapılan güncellemeler paydaşlarla paylaşılmaktadır.", 
+                    "Diploma ve sertifikalandırma sistemi kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ]
+            }
+        ]
+    },
+    {
+        title: "B.3. Öğrenme Kaynakları ve Destek Hizmetleri", maxWeight: 80,
+        items: [
+            {
+                id: "B.3.1", name: "Öğrenme ortam ve kaynakları",
+                levels: [
+                    "Kurumun eğitim-öğretim faaliyetlerini sürdürebilmek için yeterli kaynağı bulunmamaktadır.",
+                    "Kurumun eğitim-öğretim faaliyetlerini sürdürebilmek için uygun nitelik ve nicelikte öğrenme kaynaklarının oluşturulmasına yönelik planları vardır.",
+                    "Kurumun genelinde öğrenme kaynaklarının yönetimi alana özgü koşullar, erişilebilirlik ve birimler arası denge gözetilerek gerçekleştirilmektedir.",
+                    "Öğrenme kaynaklarının geliştirilmesine ve kullanımına yönelik izleme ve iyileştirme yapılmaktadır.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Eğitim-öğretim faaliyetleri için gerekli öğrenme kaynakları tanımlanmıştır.", 
+                    "Öğrenme kaynaklarının geliştirilmesine yönelik planlamalar bulunmaktadır.", 
+                    "Öğrenme yönetim sistemi (LMS) bulunmaktadır.", 
+                    "Basılı ve elektronik kaynaklara erişim sağlanmaktadır.", 
+                    "Çevrimiçi öğrenme kaynakları öğrencilere sunulmaktadır.", 
+                    "Öğrenme kaynakları kurum genelinde erişilebilir ve kullanılmaktadır.", 
+                    "Öğrenme kaynakları alanların ihtiyaçlarına göre çeşitlendirilmiştir.", 
+                    "Öğrenme yönetim sistemi eğitim süreçlerinde aktif kullanılmaktadır.", 
+                    "Öğrenci-öğrenci, öğrenci-öğretim elemanı ve öğrenci-materyal etkileşimini destekleyen uygulamalar bulunmaktadır.", 
+                    "Öğrenme kaynaklarının kullanımı ve yeterliliği izlenmektedir.", 
+                    "Öğrenme kaynakları geri bildirimler doğrultusunda geliştirilmektedir.", 
+                    "LMS ve diğer öğrenme ortamlarının etkililiği değerlendirilmektedir.", 
+                    "Öğrenme ortamı ve kaynakları kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ]
+            },
+            {
+                id: "B.3.2", name: "Akademik destek hizmetleri",
+                levels: [
+                    "Kurumda öğrencilerin akademik gelişimi ve kariyer planlamasına yönelik destek hizmetleri bulunmamaktadır.",
+                    "Kurumda öğrencilerin akademik gelişimi ve kariyer planlaması süreçlerine ilişkin tanımlı ilke ve kurallar bulunmaktadır.",
+                    "Kurumda öğrencilerin akademik gelişim ve kariyer planlamasına yönelik destek hizmetleri tanımlı ilke ve kurallar dahilinde yürütülmektedir.",
+                    "Kurumda öğrencilerin akademik gelişimi ve kariyer planlamasına ilişkin uygulamalar izlenmekte ve öğrencilerin katılımıyla iyileştirilmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Akademik danışmanlık sistemi tanımlanmıştır.", 
+                    "Öğrencilerin akademik gelişimi ve kariyer planlamasına yönelik destek süreçleri tanımlanmıştır.", 
+                    "Danışmanlara erişim mekanizmaları belirlenmiştir.", 
+                    "Psikolojik danışmanlık hizmetleri tanımlanmıştır.", 
+                    "Kariyer hizmetleri planlanmıştır.", 
+                    "Akademik danışmanlık hizmetleri kurum genelinde yürütülmektedir.", 
+                    "Akademik ve teknik öğrenci danışmanlığı mekanizmaları işletilmektedir.", 
+                    "Öğrencilerin danışmanlara erişimi sağlanmaktadır.", 
+                    "Kariyer merkezi hizmetleri aktif olarak yürütülmektedir.", 
+                    "Psikolojik danışmanlık hizmetleri erişilebilir durumdadır.", 
+                    "Akademik destek hizmetleri düzenli olarak izlenmektedir.", 
+                    "Öğrenci katılımı ve geri bildirimleri doğrultusunda iyileştirmeler yapılmaktadır.", 
+                    "Danışmanlık, kariyer ve psikolojik destek hizmetlerinin etkililiği değerlendirilmektedir.", 
+                    "Akademik destek hizmetleri kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ]
+            },
+            {
+                id: "B.3.3", name: "Tesis ve altyapılar",
+                levels: [
+                    "Kurumda uygun nitelik ve nicelikte tesisler ve altyapı bulunmamaktadır.",
+                    "Kurumda uygun nitelik ve nicelikte tesis ve altyapının kurulmasına ve kullanımına ilişkin planlamalar bulunmaktadır.",
+                    "Kurumun genelinde tesis ve altyapı erişilebilirdir ve bunlardan fırsat eşitliğine dayalı olarak yararlanılmaktadır.",
+                    "Tesis ve altyapının kullanımı izlenmekte ve ihtiyaçlar doğrultusunda iyileştirilmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Eğitim-öğretim faaliyetlerini destekleyecek tesis ve altyapılar planlanmıştır.", 
+                    "Yemekhane, yurt, çalışma alanları, sağlık, ulaşım ve bilişim hizmetlerine yönelik planlamalar bulunmaktadır.", 
+                    "Uzaktan eğitim altyapısına yönelik planlamalar bulunmaktadır.", 
+                    "Tesis ve altyapının kullanımına ilişkin ilke ve kurallar tanımlanmıştır.", 
+                    "Tesis ve altyapılar kurum genelinde erişilebilir ve kullanılabilir durumdadır.", 
+                    "Öğrenciler tesis ve altyapılardan fırsat eşitliği temelinde yararlanmaktadır.", 
+                    "Uzaktan eğitim altyapısı eğitim faaliyetlerini desteklemektedir.", 
+                    "Tesis ve altyapıların kullanımı düzenli olarak izlenmektedir.", 
+                    "Öğrenci ihtiyaçları doğrultusunda iyileştirmeler yapılmaktadır.", 
+                    "Tesis ve altyapının yeterliliği paydaş görüşleriyle değerlendirilmektedir.", 
+                    "Tesis ve altyapı yönetimi kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ]
+            },
+            {
+                id: "B.3.4", name: "Dezavantajlı gruplar",
+                levels: [
+                    "Kurumda dezavantajlı grupların eğitim olanaklarına erişimine ilişkin planlamalar bulunmamaktadır.",
+                    "Dezavantajlı grupların eğitim olanaklarına nitelikli ve adil erişimine ilişkin planlamalar bulunmaktadır.",
+                    "Dezavantajlı grupların eğitim olanaklarına erişimine yönelik uygulamalar yürütülmektedir.",
+                    "Dezavantajlı grupların eğitim olanaklarına erişimi izlenmekte ve grupların görüşleri alınarak iyileştirilmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Dezavantajlı grupların eğitim olanaklarına erişimine ilişkin planlamalar bulunmaktadır.", 
+                    "Dezavantajlı gruplara yönelik destek mekanizmaları tanımlanmıştır.", 
+                    "Engelsiz üniversite uygulamalarına yönelik planlamalar bulunmaktadır.", 
+                    "Uzaktan eğitim süreçlerinde erişilebilirlik ilkeleri belirlenmiştir.", 
+                    "Dezavantajlı gruplara yönelik uygulamalar kurum genelinde yürütülmektedir.", 
+                    "Eğitim olanaklarına erişimde fırsat eşitliği sağlanmaktadır.", 
+                    "Engelsiz üniversite uygulamaları aktif olarak işletilmektedir.", 
+                    "Uzaktan eğitim ortamları dezavantajlı grupların ihtiyaçlarını karşılayacak şekilde düzenlenmiştir.", 
+                    "Dezavantajlı grupların eğitim olanaklarına erişimi düzenli olarak izlenmektedir.", 
+                    "Dezavantajlı grupların görüşleri alınmakta ve iyileştirmelerde kullanılmaktadır.", 
+                    "Engelsiz üniversite uygulamaları düzenli olarak değerlendirilmekte ve geliştirilmektedir.", 
+                    "Dezavantajlı gruplara yönelik hizmetler kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir kapsayıcılık uygulamaları bulunmaktadır."
+                ]
+            },
+            {
+                id: "B.3.5", name: "Sosyal, kültürel, sportif faaliyetler",
+                levels: [
+                    "Kurumda uygun nitelik ve nicelikte sosyal, kültürel ve sportif faaliyet olanakları bulunmamaktadır.",
+                    "Sosyal, kültürel ve sportif faaliyet olanaklarının yaratılmasına ilişkin planlamalar bulunmaktadır.",
+                    "Kurumun genelinde sosyal, kültürel ve sportif faaliyetler erişilebilirdir ve fırsat eşitliğine dayalı olarak yararlanılmaktadır.",
+                    "Sosyal, kültürel ve sportif faaliyet mekanizmaları izlenmekte, ihtiyaçlar doğrultusunda çeşitlendirilmekte ve iyileştirilmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Sosyal, kültürel ve sportif faaliyetlere ilişkin planlamalar bulunmaktadır.", 
+                    "Öğrenci topluluklarına yönelik destek mekanizmaları tanımlanmıştır.", 
+                    "Sosyal, kültürel ve sportif faaliyetleri yöneten idari yapı bulunmaktadır.", 
+                    "Faaliyetlere yönelik mekân, bütçe ve rehberlik desteği planlanmıştır.", 
+                    "Sosyal, kültürel ve sportif faaliyetler kurum genelinde yürütülmektedir.", 
+                    "Öğrenciler faaliyetlerden fırsat eşitliği temelinde yararlanmaktadır.", 
+                    "Öğrenci toplulukları aktif olarak faaliyet göstermektedir.", 
+                    "Sosyal, kültürel ve sportif faaliyetler çeşitlendirilmiş durumdadır.", 
+                    "Sosyal, kültürel ve sportif faaliyetler düzenli olarak izlenmektedir.", 
+                    "Öğrenci ihtiyaç ve talepleri doğrultusunda faaliyetler geliştirilmektedir.", 
+                    "Katılım ve geri bildirim düzeyleri değerlendirilmektedir.", 
+                    "Sosyal, kültürel ve sportif faaliyetler kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ]
+            }
+        ]
+    },
+    {
+        title: "B.4. Öğretim Kadrosu", maxWeight: 100,
+        items: [
+            {
+                id: "B.4.1", name: "Atama, yükseltme ve görevlendirme",
+                levels: [
+                    "Kurumun atama, yükseltme ve görevlendirme kriterleri tanımlanmamış.",
+                    "Kurumun atama yükseltme ve görevlendirme kriterleri tanımlanmış; ancak uygulama sonuçları irdelenmemiştir.",
+                    "Kurumun alanlar için tanımlı ve paydaşlarca bilinen atama, yükseltme ve görevlendirme kriterleri uygulanmakta ve karar almalarda kullanılmaktadır.",
+                    "Kurumun atama, yükseltme ve görevlendirme uygulamalarının sonuçları izlenmekte ve değerlendirilerek önlemler alınmaktadır.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Atama, yükseltme ve görevlendirme süreçleri tanımlanmıştır.", 
+                    "Akademik liyakat ve fırsat eşitliğini gözeten kriterler bulunmaktadır.", 
+                    "Ders görevlendirme ve ders yükü esasları belirlenmiştir.", 
+                    "Kurumun öğretim elemanlarından beklentileri tanımlanmıştır.", 
+                    "Kurum dışından görevlendirilen öğretim elemanlarının seçim kriterleri belirlenmiştir.", 
+                    "Atama, yükseltme ve görevlendirme kriterleri kurum genelinde uygulanmaktadır.", 
+                    "Ders görevlendirmelerinde uzmanlık alanı ile ders uyumu gözetilmektedir.", 
+                    "Ders yükü ve dağılım dengesi şeffaf biçimde uygulanmaktadır.", 
+                    "Kurum dışından görevlendirilen öğretim elemanlarının performansları değerlendirilmektedir.", 
+                    "Atama, yükseltme ve görevlendirme süreçleri düzenli olarak izlenmektedir.", 
+                    "Uygulama sonuçları değerlendirilerek iyileştirmeler yapılmaktadır.", 
+                    "Ders görevlendirmelerinde ortaya çıkan sorunlar analiz edilerek önlemler alınmaktadır.", 
+                    "Atama ve görevlendirme sistemi kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir insan kaynakları uygulamaları bulunmaktadır."
+                ]
+            },
+            {
+                id: "B.4.2", name: "Öğretim yetkinlikleri ve gelişimi",
+                levels: [
+                    "Kurumda öğretim elemanlarının öğretim yetkinliğini geliştirmek üzere planlamalar bulunmamaktadır.",
+                    "Kurumun öğretim elemanlarının; öğrenci merkezli öğrenme, uzaktan eğitim, ölçme değerlendirme, materyal geliştirme gibi alanlardaki yetkinliklerinin geliştirilmesine ilişkin planlar bulunmaktadır.",
+                    "Kurumun genelinde öğretim elemanlarının öğretim yetkinliğini geliştirmek üzere uygulamalar vardır.",
+                    "Öğretim yetkinliğini geliştirme uygulamalarından elde edilen bulgular izlenmekte ve öğretim elemanları ile birlikte irdelenerek önlemler alınmaktadır.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Öğretim elemanlarının öğretim yetkinliğini geliştirmeye yönelik planlamalar bulunmaktadır.", 
+                    "Öğrenci merkezli öğrenme, ölçme-değerlendirme ve uzaktan eğitim alanlarında gelişim planları oluşturulmuştur.", 
+                    "Öğretim elemanlarının pedagojik ve teknolojik yetkinliklerini geliştirmeye yönelik mekanizmalar bulunmaktadır.", 
+                    "Öğrenme-öğretme merkezi veya benzeri bir yapı bulunmaktadır.", 
+                    "Öğretim yetkinliği geliştirme uygulamaları kurum genelinde yürütülmektedir.", 
+                    "Uzaktan eğitim ve dijital öğretim yetkinlikleri geliştirilmektedir.", 
+                    "Öğretim elemanları öğrenci merkezli öğretim yöntemleri konusunda desteklenmektedir.", 
+                    "Öğretim elemanlarının eğitime katılımı teşvik edilmektedir.", 
+                    "Öğretim yetkinliği geliştirme faaliyetleri düzenli olarak izlenmektedir.", 
+                    "Öğretim elemanlarından alınan geri bildirimler doğrultusunda iyileştirmeler yapılmaktadır.", 
+                    "Öğretim yetkinliği geliştirme performansı değerlendirilmektedir.", 
+                    "Öğretim elemanları izleme ve iyileştirme süreçlerine katılmaktadır.", 
+                    "Öğretim yetkinliği geliştirme sistemi kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ]
+            },
+            {
+                id: "B.4.3", name: "Eğitim faaliyetlerine yönelik teşvik ve ödüllendirme",
+                levels: [
+                    "Teşvik ve ödüllendirme mekanizmaları bulunmamaktadır.",
+                    "Teşvik ve ödüllendirme mekanizmalarının yetkinlik temelli, adil ve şeffaf biçimde oluşturulmasına yönelik planlar bulunmaktadır.",
+                    "Teşvik ve ödül uygulamaları kurum geneline yayılmıştır.",
+                    "Teşvik ve ödül uygulamaları izlenmekte ve iyileştirilmektedir.",
+                    "İçselleştirilmiş, sistematik, sürdürülebilir ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ],
+                checks: [
+                    "Eğitim-öğretim faaliyetlerini teşvik etmeye yönelik mekanizmalar bulunmaktadır.", 
+                    "Eğitim faaliyetlerinin değerlendirilmesine yönelik kriterler belirlenmiştir.", 
+                    "Eğitim faaliyetleri atama ve yükseltme süreçlerinde dikkate alınmaktadır.", 
+                    "Teşvik ve ödüllendirme mekanizmaları adil ve şeffaf biçimde tanımlanmıştır.", 
+                    "Eğitim faaliyetlerine yönelik teşvik ve ödüllendirme uygulamaları kurum genelinde yürütülmektedir.", 
+                    "Yenilikçi öğretim uygulamaları görünür ve desteklenir durumdadır.", 
+                    "Eğitim başarısını ödüllendiren uygulamalar yaygın biçimde kullanılmaktadır.", 
+                    "Eğitim faaliyetlerine yönelik teşvik mekanizmaları düzenli olarak izlenmektedir.", 
+                    "Öğretim elemanlarından alınan geri bildirimler doğrultusunda iyileştirmeler yapılmaktadır.", 
+                    "Teşvik ve ödüllendirme sisteminin etkililiği değerlendirilmektedir.", 
+                    "Eğitim faaliyetlerine yönelik teşvik sistemi kurumsal kültür haline gelmiştir.", 
+                    "Kuruma özgü ve örnek gösterilebilir uygulamalar bulunmaktadır."
+                ]
+            }
+        ]
+    }
+];
+
+function addLinkToSelection() {
+    const url = prompt("Seçili metne eklenecek bağlantıyı (URL) girin:\nÖrn: https://huzem.hitit.edu.tr/belge", "https://");
+    if (url && url !== "https://") {
+        document.execCommand('createLink', false, url);
+        
+        const selection = window.getSelection();
+        if (selection.focusNode && selection.focusNode.parentNode.tagName === 'A') {
+            selection.focusNode.parentNode.setAttribute('target', '_blank');
+            selection.focusNode.parentNode.setAttribute('rel', 'noopener noreferrer');
+        }
+    }
+}
+
+function init() {
+    const main = document.getElementById('main-content');
+    const summaryList = document.getElementById('summary-list');
+    main.innerHTML = '';
+    summaryList.innerHTML = '';
+
+    if (window.location.protocol === 'file:') {
+        alert('UYARI: Bu sayfayı doğrudan dosyadan (file://) açtığınız için uzak Google Apps Script sunucusuna erişim sorunları yaşayabilirsiniz. Lütfen mümkünse sayfayı yerel bir HTTP sunucusu üzerinden açın (örneğin Live Server veya python -m http.server).');
+    }
+    
+    rubricData.forEach((sec, sIdx) => {
+        const secDiv = document.createElement('div');
+        secDiv.className = 'section-card';
+        
+        secDiv.innerHTML = `
+            <div class="section-header" onclick="this.parentElement.classList.toggle('collapsed')">
+                <div class="section-title"><span class="toggle-icon">▼</span> ${sec.title}</div>
+                <div class="section-score" id="sec-total-${sIdx}">0 / ${sec.maxWeight} Puan</div>
+            </div>
+            <div class="section-body" id="sec-body-${sIdx}"></div>`;
+
+        const secBody = secDiv.querySelector('.section-body');
+
+        sec.items.forEach((item) => {
+            const cleanId = item.id.replace(/\./g, '-');
+            
+            let btns = '';
+            for(let i=1; i<=5; i++) {
+                btns += `<button class="btn-score" id="btn-${cleanId}-${i}" onclick="selectScore('${cleanId}', ${i})">${i}</button>`;
+            }
+
+            let checkHtml = item.checks.map((chk, cIdx) => `
+                <div class="check-item">
+                    <div class="check-text">${chk}</div>
+                    <div class="likert-group">
+                        <input type="radio" name="L-${cleanId}-${cIdx}" id="L-${cleanId}-${cIdx}-1" value="1" onchange="calculateSuggestion('${cleanId}')">
+                        <label for="L-${cleanId}-${cIdx}-1">1</label>
+                        <input type="radio" name="L-${cleanId}-${cIdx}" id="L-${cleanId}-${cIdx}-2" value="2" onchange="calculateSuggestion('${cleanId}')">
+                        <label for="L-${cleanId}-${cIdx}-2">2</label>
+                        <input type="radio" name="L-${cleanId}-${cIdx}" id="L-${cleanId}-${cIdx}-3" value="3" onchange="calculateSuggestion('${cleanId}')">
+                        <label for="L-${cleanId}-${cIdx}-3">3</label>
+                        <input type="radio" name="L-${cleanId}-${cIdx}" id="L-${cleanId}-${cIdx}-4" value="4" onchange="calculateSuggestion('${cleanId}')">
+                        <label for="L-${cleanId}-${cIdx}-4">4</label>
+                        <input type="radio" name="L-${cleanId}-${cIdx}" id="L-${cleanId}-${cIdx}-5" value="5" onchange="calculateSuggestion('${cleanId}')">
+                        <label for="L-${cleanId}-${cIdx}-5">5</label>
+                    </div>
+                </div>
+            `).join('');
+
+            secBody.innerHTML += `
+                <div class="sub-item collapsed">
+                    <div class="sub-title" onclick="this.parentElement.classList.toggle('collapsed')">
+                        <span class="toggle-icon">▼</span> ${item.id} ${item.name}
+                    </div>
+                    
+                    <div class="sub-body">
+                        <div class="interactive-panel">
+                            <div class="checklist-container">
+                                <h4 onclick="this.parentElement.classList.toggle('collapsed')"><span class="toggle-icon">▼</span> <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/></svg> Alt Ölçüt Değerlendirme Listesi (1-5 Puan):</h4>
+                                <div class="check-items-list">
+                                    ${checkHtml}
+                                </div>
+                            </div>
+                            <div class="suggestion-box" id="sugg-box-${cleanId}">
+                                <div class="sugg-label">Sistem Önerisi</div>
+                                <div class="sugg-value" id="sugg-val-${cleanId}">-</div>
+                                <button class="btn-apply-sugg" onclick="applySuggestion('${cleanId}')">Önerilen Puanı Uygula</button>
+                            </div>
+                        </div>
+
+                        <div class="score-buttons" id="btn-group-${cleanId}">${btns}</div>
+                        
+                        <table class="rubric-table" id="rubric-${cleanId}">
+                            <tr><th>Seviye 1</th><th>Seviye 2</th><th>Seviye 3</th><th>Seviye 4</th><th>Seviye 5</th></tr>
+                            <tr>
+                                <td id="cell-${cleanId}-1"><b>1 Puan</b>${item.levels[0]}</td>
+                                <td id="cell-${cleanId}-2"><b>2 Puan</b>${item.levels[1]}</td>
+                                <td id="cell-${cleanId}-3"><b>3 Puan</b>${item.levels[2]}</td>
+                                <td id="cell-${cleanId}-4"><b>4 Puan</b>${item.levels[3]}</td>
+                                <td id="cell-${cleanId}-5"><b>5 Puan</b>${item.levels[4]}</td>
+                            </tr>
+                        </table>
+                        
+                        <div class="rte-container">
+                            <div class="rte-toolbar">
+                                <button type="button" class="rte-btn" onclick="document.execCommand('bold',false,null)" title="Kalın"><b>B</b></button>
+                                <button type="button" class="rte-btn" onclick="document.execCommand('italic',false,null)" title="İtalik"><i>I</i></button>
+                                <button type="button" class="rte-btn" onclick="addLinkToSelection()" title="Seçili metne tıklanabilir bağlantı ekle">🔗 Link Ekle</button>
+                                <button type="button" class="rte-btn" onclick="document.execCommand('unlink',false,null)" title="Bağlantıyı kaldır">🚫 Linki Sil</button>
+                            </div>
+                            <div class="comment-area" id="comment-${cleanId}" contenteditable="true" data-placeholder="Değerlendirme gerekçenizi buraya yazınız..."></div>
+                        </div>
+                        
+                        <div class="evidence-box" id="evidence-box-${cleanId}">
+                            <label id="evidence-label-${cleanId}">Kanıt Dosyası (PDF/Görsel) veya URL Ekle — Dosya seçin ya da Ctrl+V ile yapıştırın:</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <input type="text" id="url-input-${cleanId}" placeholder="https://..." style="flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: 6px; outline: none;">
+                                <button type="button" onclick="addEvidenceLink('${cleanId}')" style="background: var(--accent); color: white; border: none; padding: 0 15px; border-radius: 6px; font-weight: bold; cursor: pointer;">URL Ekle</button>
+                            </div>
+                            <input type="file" multiple accept="image/png,image/jpeg,application/pdf" onchange="handleFileUpload(this, '${cleanId}')">
+                            <div class="preview-container" id="preview-container-${cleanId}"></div>
+                        </div>
+
+                        <input type="hidden" class="score-val" id="val-${cleanId}" value="0">
+                    </div>
+                </div>`;
+        });
+        
+        main.appendChild(secDiv);
+        summaryList.innerHTML += `<div class="summary-row"><span>${sec.title.split('.')[0] + '.' + sec.title.split('.')[1]} Alanı</span> <b id="sum-${sIdx}">0 / ${sec.maxWeight}</b></div>`;
+    });
+
+    const overall = document.createElement('div');
+    overall.className = 'section-card';
+    overall.style.background = '#f8fafc';
+    overall.innerHTML = `
+        <div class="section-title" style="margin-bottom:25px;">Kurul / Komisyon Kararı ve Genel Değerlendirme</div>
+        
+        <div style="margin-bottom:25px">
+            <label style="font-weight:700; display:block; margin-bottom:8px; color:var(--primary)">Genel Değerlendirme Özeti:</label>
+            <div class="rte-container">
+                <div class="rte-toolbar">
+                    <button type="button" class="rte-btn" onclick="document.execCommand('bold',false,null)"><b>B</b></button>
+                    <button type="button" class="rte-btn" onclick="document.execCommand('italic',false,null)"><i>I</i></button>
+                    <button type="button" class="rte-btn" onclick="addLinkToSelection()">🔗 Link Ekle</button>
+                    <button type="button" class="rte-btn" onclick="document.execCommand('unlink',false,null)">🚫 Linki Sil</button>
+                </div>
+                <div class="comment-area" id="overall-summary" contenteditable="true" data-placeholder="Programın eğitim-öğretim kalitesine ilişkin genel görüş..."></div>
+            </div>
+        </div>
+
+        <div style="margin-bottom:25px">
+            <label style="font-weight:700; display:block; margin-bottom:8px; color:#166534">Kurumun Güçlü Yönleri:</label>
+            <div class="rte-container" style="border-color:#bbf7d0;">
+                <div class="rte-toolbar" style="background:#f0fdf4; border-color:#bbf7d0;">
+                    <button type="button" class="rte-btn" onclick="document.execCommand('bold',false,null)"><b>B</b></button>
+                    <button type="button" class="rte-btn" onclick="document.execCommand('italic',false,null)"><i>I</i></button>
+                    <button type="button" class="rte-btn" onclick="addLinkToSelection()">🔗 Link Ekle</button>
+                </div>
+                <div class="comment-area" id="overall-strengths" style="min-height:90px; background:#f0fdf4;" contenteditable="true" data-placeholder="- İyi uygulama örneği..."></div>
+            </div>
+        </div>
+
+        <div>
+            <label style="font-weight:700; display:block; margin-bottom:8px; color:#991b1b">Gelişmeye Açık Yönleri:</label>
+            <div class="rte-container" style="border-color:#fecaca;">
+                <div class="rte-toolbar" style="background:#fef2f2; border-color:#fecaca;">
+                    <button type="button" class="rte-btn" onclick="document.execCommand('bold',false,null)"><b>B</b></button>
+                    <button type="button" class="rte-btn" onclick="document.execCommand('italic',false,null)"><i>I</i></button>
+                    <button type="button" class="rte-btn" onclick="addLinkToSelection()">🔗 Link Ekle</button>
+                </div>
+                <div class="comment-area" id="overall-weaknesses" style="min-height:90px; background:#fef2f2;" contenteditable="true" data-placeholder="- İyileştirme alanı..."></div>
+            </div>
+        </div>
+    `;
+    main.appendChild(overall);
+
+    calculateTotal();
+    loadProjectList();
+}
+
+function handleFileUpload(input, cleanId) {
+    if (!currentAttachments[cleanId]) currentAttachments[cleanId] = [];
+
+    Array.from(input.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            if (file.type.startsWith('image/')) {
+                const attachment = {
+                    type: 'image',
+                    title: file.name,
+                    src: e.target.result,
+                    url: null,
+                    status: IMGBB_API_KEY && !IMGBB_API_KEY.includes('BURAYA') ? 'uploading' : 'pending'
+                };
+                currentAttachments[cleanId].push(attachment);
+                renderPreviews(cleanId);
+
+                if (IMGBB_API_KEY && !IMGBB_API_KEY.includes('BURAYA')) {
+                    uploadImageToImgbb(attachment, cleanId);
+                }
+            } else if (file.type === 'application/pdf') {
+                const attachment = {
+                    type: 'pdf',
+                    title: file.name,
+                    src: e.target.result,
+                    url: null,
+                    status: 'uploading'
+                };
+                currentAttachments[cleanId].push(attachment);
+                renderPreviews(cleanId);
+                uploadFileToDrive(attachment, cleanId, file.type);
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+function uploadImageToImgbb(attachment, cleanId) {
+    const base64 = attachment.src.split(',')[1] || '';
+    const params = new URLSearchParams();
+    params.append('key', IMGBB_API_KEY);
+    params.append('image', base64);
+    params.append('name', attachment.title.replace(/\.[^/.]+$/, ''));
+
+    fetch(IMGBB_UPLOAD_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: params.toString()
+    })
+    .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+    })
+    .then(data => {
+        if (data && data.success && data.data && data.data.url) {
+            attachment.url = data.data.url;
+            attachment.status = 'done';
+        } else {
+            attachment.status = 'error';
+            console.error('imgbb upload error', data);
+        }
+        renderPreviews(cleanId);
+    })
+    .catch(err => {
+        attachment.status = 'error';
+        console.error('imgbb upload failed', err);
+        renderPreviews(cleanId);
+    });
+}
+
+function uploadFileToDrive(attachment, cleanId, mimeType) {
+    const base64 = attachment.src.split(',')[1] || '';
+    const fileEntry = {
+        fileName: attachment.title,
+        mimeType: mimeType,
+        data: base64
+    };
+
+    fetch(`${GOOGLE_APP_URL}?action=uploadFile`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(fileEntry)
+    })
+    .then(res => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+    })
+    .then(data => {
+        if (data && data.status === 'success' && data.url) {
+            attachment.url = data.url;
+            attachment.status = 'done';
+        } else {
+            attachment.status = 'error';
+            console.error('Drive upload error', data);
+        }
+        renderPreviews(cleanId);
+    })
+    .catch(err => {
+        attachment.status = 'error';
+        console.error('Drive upload failed', err);
+        renderPreviews(cleanId);
+    });
+}
+
+function addEvidenceLink(cleanId) {
+    const input = document.getElementById(`url-input-${cleanId}`);
+    let url = input.value.trim();
+    if (!url) return;
+
+    if (!/^https?:\/\//i.test(url)) {
+        url = 'https://' + url;
+    }
+
+    const title = prompt('Bu bağlantı için bir isim girin:', url) || url;
+    if (!currentAttachments[cleanId]) currentAttachments[cleanId] = [];
+    currentAttachments[cleanId].push({
+        type: 'url',
+        title: title,
+        url: url,
+        src: url,
+        status: 'done'
+    });
+    input.value = '';
+    renderPreviews(cleanId);
+}
+
+function renderPreviews(cleanId) {
+    const container = document.getElementById(`preview-container-${cleanId}`);
+    container.innerHTML = '';
+
+    if (currentAttachments[cleanId]) {
+        currentAttachments[cleanId].forEach((attachment, idx) => {
+            const wrap = document.createElement('div');
+            wrap.style.cssText = "display: flex; flex-direction: column; gap: 8px; background: white; border: 1px solid var(--border); padding: 12px; border-radius: 8px; font-size: 0.85rem; width: 100%; box-sizing: border-box;";
+
+            const isImage = attachment.type === 'image';
+            const isPdf = attachment.type === 'pdf';
+
+            const displayUrl = attachment.url || attachment.src;
+            let previewHtml = '';
+            if (isImage) {
+                previewHtml = `<div style="display:flex; align-items:center; gap:10px;">
+                                   <img src="${displayUrl}" style="width:40px; height:40px; object-fit:cover; border-radius:4px; border:1px solid #ccc; cursor:pointer;" onclick="openModal('${displayUrl}')" title="Görüntülemek için tıkla">
+                                   <strong style="color: var(--accent);">${escapeHtml(attachment.title || 'Resim')}</strong>
+                               </div>`;
+            } else if (isPdf) {
+                previewHtml = `<div style="display:flex; align-items:center; gap:10px;">
+                                   <span style="font-size:24px;">📄</span>
+                                   <a href="${displayUrl}" target="_blank" download="${escapeHtml(attachment.title || 'belge.pdf')}" style="color: var(--accent); text-decoration: none; font-weight: 600;">${escapeHtml(attachment.title || 'PDF Belgesi')}</a>
+                               </div>`;
+            } else {
+                previewHtml = `<div style="display:flex; align-items:center; gap:10px; flex-wrap: wrap;">
+                                   <span style="font-size:24px;">🔗</span>
+                                   <a href="${displayUrl}" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 600;">${escapeHtml(attachment.title || displayUrl)}</a>
+                               </div>`;
+            }
+
+            const statusText = attachment.status === 'uploading'
+                ? '<span style="color: #2563eb; font-size:0.8rem;">Yükleniyor...</span>'
+                : attachment.status === 'error'
+                ? '<span style="color: #dc2626; font-size:0.8rem;">Yükleme hatası</span>'
+                : '';
+
+            wrap.innerHTML = `
+                <div style="display:flex; align-items:center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 0;">${previewHtml}${statusText ? `<div>${statusText}</div>` : ''}</div>
+                    <button type="button" onclick="removeAttachment('${cleanId}', ${idx})" style="background: var(--danger); color: white; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer; font-weight: bold; font-size: 0.75rem;">SİL</button>
+                </div>
+                <input type="text" value="${escapeHtml(attachment.title || '')}" onchange="updateAttachmentTitle('${cleanId}', ${idx}, this.value)" placeholder="Ek adı girin" style="width:100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; outline: none;" />
+            `;
+
+            container.appendChild(wrap);
+        });
+    }
+}
+
+function removeAttachment(cleanId, idx) {
+    currentAttachments[cleanId].splice(idx, 1);
+    renderPreviews(cleanId);
+}
+
+function updateAttachmentTitle(cleanId, idx, title) {
+    if (currentAttachments[cleanId] && currentAttachments[cleanId][idx]) {
+        currentAttachments[cleanId][idx].title = title;
+    }
+}
+
+function openModal(src) {
+    document.getElementById('modal-img').src = src;
+    document.getElementById('image-modal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('image-modal').style.display = 'none';
+}
+
+function calculateSuggestion(cleanId) {
+    const container = document.getElementById(`btn-group-${cleanId}`).parentElement;
+    const checkedRadios = container.querySelectorAll('.likert-group input[type="radio"]:checked');
+    
+    if(checkedRadios.length === 0) {
+        const suggBox = document.getElementById(`sugg-box-${cleanId}`);
+        suggBox.classList.remove('active');
+        document.getElementById(`sugg-val-${cleanId}`).innerText = '-';
+        return;
+    }
+    
+    let sum = 0;
+    checkedRadios.forEach(r => sum += parseInt(r.value));
+    let avg = sum / checkedRadios.length;
+    let suggestedScore = Math.round(avg);
+
+    const suggBox = document.getElementById(`sugg-box-${cleanId}`);
+    const suggValText = document.getElementById(`sugg-val-${cleanId}`);
+    
+    suggBox.dataset.suggested = suggestedScore;
+    suggValText.innerText = suggestedScore;
+    suggBox.classList.add('active');
+}
+
+function applySuggestion(cleanId) {
+    const box = document.getElementById(`sugg-box-${cleanId}`);
+    const score = parseInt(box.dataset.suggested);
+    if(score >= 1 && score <= 5) {
+        selectScore(cleanId, score);
+    }
+}
+
+function selectScore(cleanId, score) {
+    const group = document.getElementById(`btn-group-${cleanId}`);
+    if(!group) return;
+    group.querySelectorAll('.btn-score').forEach(b => b.className = 'btn-score');
+    
+    const clsObj = {5: 'lv5', 4: 'lv4', 3: 'lv3', 2: 'lv2', 1: 'lv1'};
+    const btn = document.getElementById(`btn-${cleanId}-${score}`);
+    if(btn) btn.className = `btn-score active ${clsObj[score]}`;
+    
+    const valInput = document.getElementById(`val-${cleanId}`);
+    if(valInput) valInput.value = score;
+    
+    const table = document.getElementById(`rubric-${cleanId}`);
+    if(table) {
+        table.querySelectorAll('td').forEach(td => td.classList.remove('selected-level'));
+        const cell = document.getElementById(`cell-${cleanId}-${score}`);
+        if(score > 0 && cell) {
+            cell.classList.add('selected-level');
+        }
+    }
+    
+    const evBox = document.getElementById(`evidence-box-${cleanId}`);
+    const evLabel = document.getElementById(`evidence-label-${cleanId}`);
+    if(evBox && evLabel) {
+        const colors = {
+            5: { border: '#16a34a', bg: '#f0fdf4', text: '#166534' }, 
+            4: { border: '#84cc16', bg: '#ecfccb', text: '#3f6212' }, 
+            3: { border: '#0284c7', bg: '#e0f2fe', text: '#0369a1' }, 
+            2: { border: '#d97706', bg: '#fef3c7', text: '#92400e' }, 
+            1: { border: '#dc2626', bg: '#fef2f2', text: '#991b1b' }  
+        };
+        
+        if(score > 0) {
+            evBox.style.borderColor = colors[score].border;
+            evBox.style.backgroundColor = colors[score].bg;
+            evLabel.innerHTML = `<span style="display:inline-block; padding:2px 8px; border-radius:4px; background:${colors[score].border}; color:white;">Seviye ${score}</span> &nbsp;Bu Puana Ait Kanıt (PDF/Görsel/URL) Ekle:`;
+            evLabel.style.color = colors[score].text;
+        } else {
+            evBox.style.borderColor = '#94a3b8';
+            evBox.style.backgroundColor = '#f8fafc';
+            evLabel.innerHTML = `Kanıt Dosyası (PDF/Görsel) veya URL Ekle:`;
+            evLabel.style.color = 'var(--primary)';
+        }
+    }
+
+    calculateTotal();
+}
+
+function calculateTotal() {
+    let grand = 0;
+    rubricData.forEach((sec, sIdx) => {
+        let rawTotal = 0;
+        let rawMax = sec.items.length * 5; 
+        
+        sec.items.forEach(item => {
+            let valId = item.id.replace(/\./g, '-');
+            const valEl = document.getElementById(`val-${valId}`);
+            rawTotal += valEl ? (parseInt(valEl.value) || 0) : 0;
+        });
+
+        let weightedScore = Math.round((rawTotal / rawMax) * sec.maxWeight);
+
+        const secEl = document.getElementById(`sec-total-${sIdx}`);
+        if(secEl) secEl.innerText = `${weightedScore} / ${sec.maxWeight} Puan`;
+        
+        let sumText = document.getElementById(`sum-${sIdx}`);
+        if(sumText) {
+            sumText.innerText = `${weightedScore} / ${sec.maxWeight}`;
+            sumText.style.color = weightedScore >= (sec.maxWeight * 0.6) ? '#4ade80' : '#f87171';
+        }
+        
+        grand += weightedScore;
+    });
+
+    const grandEl = document.getElementById('grand-total');
+    if(grandEl) grandEl.innerText = grand;
+    
+    const badge = document.getElementById('status-badge');
+    if(badge) {
+        if(grand >= 300) { badge.innerText = "YÜKSEK KALİTE STANDARDI"; badge.style.background = "var(--success)"; }
+        else if(grand >= 200) { badge.innerText = "YETERLİ / İZLENMELİ"; badge.style.background = "var(--warning)"; }
+        else { badge.innerText = "CİDDİ İYİLEŞTİRME GEREKİYOR"; badge.style.background = "var(--danger)"; }
+    }
+}
+
+function saveData() {
+    const projNo = document.getElementById('proj-no').value.trim();
+    if(!projNo) {
+        alert("Sisteme kaydetmek için lütfen Kurum/Birim ID'si giriniz!");
+        document.getElementById('proj-no').focus();
+        return;
+    }
+
+    if (!GOOGLE_APP_URL || GOOGLE_APP_URL.includes("BURAYA_KENDİ_WEB_APP_URL_Nİ_YAPIŞTIR")) {
+        alert("Lütfen HTML içindeki GOOGLE_APP_URL kısmına kendi Apps Script Web App linkinizi yapıştırın!");
+        return;
+    }
+
+    document.getElementById('loader-text').innerText = "Veritabanına Kaydediliyor...";
+    document.getElementById('loader').style.display = "flex";
+
+    let payload = {
+        projectNumber: projNo,
+        projectName: document.getElementById('proj-name').value.trim(),
+        grandTotal: document.getElementById('grand-total').innerText,
+        status: document.getElementById('status-badge').innerText,
+        overall: {
+            summary: compressIfUseful(sanitizeCommentHTML(document.getElementById('overall-summary').innerHTML)),
+            strengths: compressIfUseful(sanitizeCommentHTML(document.getElementById('overall-strengths').innerHTML)),
+            weaknesses: compressIfUseful(sanitizeCommentHTML(document.getElementById('overall-weaknesses').innerHTML))
+        },
+        details: {}
+    };
+
+    let attachmentProblem = null;
+
+    rubricData.forEach((sec) => {
+        sec.items.forEach(item => {
+            let cleanId = item.id.replace(/\./g, '-');
+            const valEl = document.getElementById(`val-${cleanId}`);
+            const commEl = document.getElementById(`comment-${cleanId}`);
+            
+            const rawAttachments = currentAttachments[cleanId] || [];
+            const pendingAttachment = rawAttachments.find(att => {
+                if (att.type !== 'image' && att.type !== 'pdf') return false;
+                const isDone = att.status === 'done' || (typeof att.status === 'undefined' && !!att.url);
+                return !isDone;
+            });
+            if (pendingAttachment) {
+                attachmentProblem = `Lütfen tüm dosya yüklemelerinin tamamlanmasını bekleyin. (${item.id} içindeki ${pendingAttachment.title || 'bir ek'})`;
+            }
+
+            payload.details[item.id] = {
+                score: valEl ? (parseInt(valEl.value) || 0) : 0,
+                comment: commEl ? compressIfUseful(sanitizeCommentHTML(commEl.innerHTML)) : "",
+                checks: [],
+                attachments: rawAttachments
+                    .filter(att => att.url && (att.status === 'done' || typeof att.status === 'undefined'))
+                    .map(att => ({ type: att.type, title: att.title, url: att.url }))
+            };
+            
+            for(let i=0; i<item.checks.length; i++) {
+                let radio = document.querySelector(`input[name="L-${cleanId}-${i}"]:checked`);
+                payload.details[item.id].checks.push(radio ? parseInt(radio.value) : 0);
+            }
+        });
+    });
+
+    let payloadString = JSON.stringify(payload);
+
+    const oversizedFields = [];
+    const checkField = (key, value) => {
+        const length = String(value || '').length;
+        if (length > 50000) oversizedFields.push({ key, length });
+    };
+
+    checkField('projectNumber', payload.projectNumber);
+    checkField('projectName', payload.projectName);
+    checkField('overall.summary', payload.overall.summary);
+    checkField('overall.strengths', payload.overall.strengths);
+    checkField('overall.weaknesses', payload.overall.weaknesses);
+
+    Object.keys(payload.details).forEach(id => {
+        const entry = payload.details[id];
+        checkField(`${id}.comment`, entry.comment);
+        if (entry.attachments && Array.isArray(entry.attachments)) {
+            entry.attachments.forEach((attach, idx) => {
+                checkField(`${id}.attachments[${idx}].title`, attach.title);
+                checkField(`${id}.attachments[${idx}].url`, attach.url);
+            });
+        }
+    });
+
+    if (attachmentProblem) {
+        document.getElementById('loader').style.display = 'none';
+        alert(`⚠️ Dosya eklerinde sorun var: ${attachmentProblem}`);
+        return;
+    }
+
+    if (oversizedFields.length > 0) {
+        document.getElementById('loader').style.display = 'none';
+        const largest = oversizedFields.sort((a, b) => b.length - a.length).slice(0, 4);
+        const details = largest.map(item => `• ${item.key}: ${item.length} karakter`).join('\n');
+        alert(`⚠️ HATA: Kaydetmek istediğiniz verinin bazı alanları Google Sheets hücre sınırını aşıyor!\n\nEn büyük alanlar:\n${details}\n\nGoogle Sheets her hücre için maksimum 50.000 karakter destekler. Lütfen uzun yorumları birkaç küçük paragrafa bölerek kaydetmeyi deneyin.`);
+        return;
+    }
+
+    fetch(GOOGLE_APP_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Accept': 'application/json'
+        },
+        body: payloadString
+    })
+    .then(response => {
+        document.getElementById('loader').style.display = "none";
+        if (response.type === 'opaque') {
+            alert("Veri sunucuya gönderildi. CORS kısıtlaması nedeniyle sunucudan gelen yanıt okunamadı. Sunucudaki kaydı kontrol edin.");
+            return;
+        }
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`Sunucu hatası ${response.status}: ${text || response.statusText}`);
+            });
+        }
+        return response.text().then(text => {
+            try {
+                return JSON.parse(text);
+            } catch (parseErr) {
+                throw new Error(`Beklenmeyen yanıt formatı: ${text}`);
+            }
+        });
+    })
+    .then(res => {
+        if (!res) return;
+        if (res.status === 'success') {
+            alert(res.message);
+            loadProjectList();
+        } else {
+            alert("Veritabanı Hatası: " + (res.message || JSON.stringify(res)));
+        }
+    })
+    .catch(err => {
+        document.getElementById('loader').style.display = "none";
+        console.error('Kayıt hatası:', err);
+        alert("Ağ Hatası: Sunucuya ulaşılamadı veya beklenmeyen yanıt alındı.\n\nDetay: " + err.message);
+    });
+}
+
+function loadProjectList() {
+    if (!GOOGLE_APP_URL || GOOGLE_APP_URL.includes("BURAYA_KENDİ_WEB_APP_URL_Nİ_YAPIŞTIR")) return;
+
+    fetch(GOOGLE_APP_URL + "?action=getList", { mode: 'cors', cache: 'no-cache', credentials: 'omit' })
+    .then(res => res.json())
+    .then(list => {
+        const sel = document.getElementById('project-selector');
+        sel.innerHTML = '<option value="NEW">-- Yeni Değerlendirme Formu --</option>';
+        list.forEach(id => {
+            const opt = document.createElement('option');
+            opt.value = id; opt.innerText = id;
+            sel.appendChild(opt);
+        });
+    })
+    .catch(err => console.log("Veritabanı liste çekme hatası: ", err));
+}
+
+function handleProjectSelection() {
+    const val = document.getElementById('project-selector').value;
+    if (val === "NEW") {
+        document.getElementById('proj-no').value = '';
+        document.getElementById('proj-name').value = '';
+        document.getElementById('overall-summary').innerHTML = '';
+        document.getElementById('overall-strengths').innerHTML = '';
+        document.getElementById('overall-weaknesses').innerHTML = '';
+        
+        document.querySelectorAll('.btn-score').forEach(b => b.className = 'btn-score');
+        document.querySelectorAll('.score-val').forEach(v => v.value = '0');
+        document.querySelectorAll('.comment-area').forEach(t => t.innerHTML = '');
+        document.querySelectorAll('.suggestion-box').forEach(b => { b.classList.remove('active'); b.dataset.suggested = "0"; });
+        document.querySelectorAll('.sugg-value').forEach(v => v.innerText = "-");
+        document.querySelectorAll('.likert-group input[type="radio"]').forEach(r => r.checked = false);
+        document.querySelectorAll('.rubric-table td').forEach(td => td.classList.remove('selected-level'));
+        
+        document.querySelectorAll('.evidence-box').forEach(b => {
+            b.style.backgroundColor = '#f8fafc';
+            b.style.borderColor = '#94a3b8';
+            let lbl = b.querySelector('label');
+            if(lbl) { lbl.innerHTML = 'Kanıt Dosyası (PDF/Görsel) veya URL Ekle:'; lbl.style.color = 'var(--primary)'; }
+        });
+        
+        currentAttachments = {};
+        document.querySelectorAll('.preview-container').forEach(c => c.innerHTML = '');
+        
+        calculateTotal();
+    } else {
+        loadProjectData(val);
+    }
+}
+
+function loadProjectData(projNo) {
+    document.getElementById('loader-text').innerText = "Kayıt Veritabanından Yükleniyor...";
+    document.getElementById('loader').style.display = "flex";
+
+    fetch(`${GOOGLE_APP_URL}?action=load&projNo=${encodeURIComponent(projNo)}`, { mode: 'cors', cache: 'no-cache', credentials: 'omit' })
+    .then(res => res.json())
+    .then(res => {
+        document.getElementById('loader').style.display = "none";
+        if(res.status === 'success') {
+            const data = res.data;
+            document.getElementById('proj-no').value = data.projectNumber;
+            document.getElementById('proj-name').value = data.projectName;
+            document.getElementById('overall-summary').innerHTML = sanitizeCommentHTML(decompressIfNeeded(data.overall.summary || ""));
+            document.getElementById('overall-strengths').innerHTML = sanitizeCommentHTML(decompressIfNeeded(data.overall.strengths || ""));
+            document.getElementById('overall-weaknesses').innerHTML = sanitizeCommentHTML(decompressIfNeeded(data.overall.weaknesses || ""));
+
+            document.querySelectorAll('.likert-group input[type="radio"]').forEach(r => r.checked = false);
+            document.querySelectorAll('.suggestion-box').forEach(b => { b.classList.remove('active'); b.dataset.suggested = "0"; });
+            document.querySelectorAll('.sugg-value').forEach(v => v.innerText = "-");
+
+            currentAttachments = {};
+            document.querySelectorAll('.preview-container').forEach(c => c.innerHTML = '');
+
+            if(data.details) {
+                Object.keys(data.details).forEach(id => {
+                    let cleanId = id.replace(/\./g, '-');
+                    let det = data.details[id];
+
+                    let commentBox = document.getElementById(`comment-${cleanId}`);
+                    if(commentBox) commentBox.innerHTML = sanitizeCommentHTML(decompressIfNeeded(det.comment || ""));
+                    
+                    if(det.checks) {
+                        det.checks.forEach((val, cIdx) => {
+                            if(val > 0) {
+                                let radio = document.getElementById(`L-${cleanId}-${cIdx}-${val}`);
+                                if(radio) radio.checked = true;
+                            }
+                        });
+                        calculateSuggestion(cleanId);
+                    }
+
+                    if (det.score > 0) {
+                        selectScore(cleanId, det.score);
+                    }
+
+                    if (det.attachments && det.attachments.length > 0) {
+                        currentAttachments[cleanId] = det.attachments.map(att => ({
+                            ...att,
+                            status: att.status || 'done',
+                            src: att.src || att.url || ''
+                        }));
+                        renderPreviews(cleanId);
+                    }
+                });
+            }
+        } else {
+            alert("Veri yüklenemedi: " + res.message);
+        }
+    })
+    .catch(err => {
+        document.getElementById('loader').style.display = "none";
+        alert("Ağ Hatası: Kayıt getirilemedi.");
+    });
+}
+
+function exportPDF() {
+    const projNo = document.getElementById('proj-no').value || 'Birim';
+    const projName = document.getElementById('proj-name').value || 'Değerlendirme';
+    const timestamp = new Date().toLocaleDateString('tr-TR').replace(/\./g, '-');
+    const grandTotal = document.getElementById('grand-total').innerText;
+    const status = document.getElementById('status-badge').innerText;
+    
+    let reportHTML = `
+    <div class="pdf-report">
+        <div class="pdf-header">
+            <h1>EĞİTİM VE ÖĞRETİM DEĞERLENDİRME RAPORU</h1>
+            <p>Kurumsal Akreditasyon ve Kalite Güvence Sistemi</p>
+        </div>
+        <div class="pdf-meta">
+            <div class="pdf-meta-item">
+                <div class="pdf-meta-label">Birim / Program Kodu</div>
+                <div class="pdf-meta-value">${projNo}</div>
+            </div>
+            <div class="pdf-meta-item">
+                <div class="pdf-meta-label">Genel Toplam Puan</div>
+                <div class="pdf-meta-value">${grandTotal} / 400</div>
+            </div>
+            <div class="pdf-meta-item">
+                <div class="pdf-meta-label">Genel Durum</div>
+                <div class="pdf-meta-value" style="color: ${grandTotal >= 200 ? '#16a34a' : '#dc2626'}">${status}</div>
+            </div>
+        </div>
+        <div style="padding: 20px;">
+            <div style="margin-bottom: 25px;">
+                <div style="font-size: 14px; color: #475569;"><strong>Değerlendirilen Program:</strong> ${projName}</div>
+                <div style="font-size: 14px; color: #475569; margin-top: 5px;"><strong>Rapor Tarihi:</strong> ${new Date().toLocaleDateString('tr-TR', {year: 'numeric', month: 'long', day: 'numeric'})}</div>
+            </div>`;
+    
+    rubricData.forEach((section, sIdx) => {
+        const sumEl = document.getElementById(`sum-${sIdx}`);
+        reportHTML += `<div class="pdf-section">
+            <div class="pdf-section-title">${section.title} (Ağırlıklı Puan: ${sumEl ? sumEl.innerText : "0 / " + section.maxWeight})</div>`;
+        
+        section.items.forEach(item => {
+            const cleanId = item.id.replace(/\./g, '-');
+            const valEl = document.getElementById(`val-${cleanId}`);
+            const commEl = document.getElementById(`comment-${cleanId}`);
+            const score = valEl ? (parseInt(valEl.value) || 0) : 0;
+            
+            const commentHTML = commEl ? (commEl.innerHTML || 'Bu kriter için değerlendirme notu girilmemiştir.') : 'Bu kriter için değerlendirme notu girilmemiştir.';
+            
+            reportHTML += `<div class="pdf-item">
+                <div class="pdf-item-header">
+                    <div class="pdf-item-name">${item.id} — ${item.name}</div>
+                    <div class="pdf-item-score">Seviye: ${score} / 5</div>
+                </div>
+                <div class="pdf-item-comment">${commentHTML}</div>
+            </div>`;
+        });
+        reportHTML += `</div>`;
+    });
+    
+    const summary = document.getElementById('overall-summary').innerHTML || '-';
+    const strengths = document.getElementById('overall-strengths').innerHTML || '-';
+    const weaknesses = document.getElementById('overall-weaknesses').innerHTML || '-';
+    
+    reportHTML += `
+        <div class="pdf-section" style="margin-top: 40px;">
+            <div class="pdf-section-title">Kurul/Komisyon Kararı ve Genel Değerlendirme</div>
+            <div class="pdf-overall">
+                <div class="pdf-overall-title">Genel Değerlendirme Özeti</div>
+                <div class="pdf-overall-text">${summary}</div>
+            </div>
+            <div class="pdf-overall" style="border-color: #86efac; background: #f0fdf4; margin-top: 15px;">
+                <div class="pdf-overall-title" style="color: #166534;">Güçlü Yönler</div>
+                <div class="pdf-overall-text">${strengths}</div>
+            </div>
+            <div class="pdf-overall" style="border-color: #fca5a5; background: #fef2f2; margin-top: 15px;">
+                <div class="pdf-overall-title" style="color: #991b1b;">Gelişmeye Açık Yönler</div>
+                <div class="pdf-overall-text">${weaknesses}</div>
+            </div>
+        </div>
+        <div style="text-align: center; padding: 20px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; margin-top: 40px;">
+            <div>Bu rapor Akademik Kalite Güvence Sistemi üzerinden otomatik oluşturulmuştur.</div>
+        </div>
+        </div></div>`;
+    
+    const reportDiv = document.createElement('div');
+    reportDiv.innerHTML = reportHTML;
+    
+    document.getElementById('loader-text').innerText = "Profesyonel PDF Raporu Hazırlanıyor...";
+    document.getElementById('loader').style.display = "flex";
+    
+    html2pdf().set({
+        margin: [0.5, 0.5, 0.5, 0.5],
+        filename: `Degerlendirme_${projNo}_${timestamp}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: 'avoid-all' },
+        enableLinks: true
+    }).from(reportDiv).save().then(() => {
+        document.getElementById('loader').style.display = "none";
+    });
+}
+
+function escapeHtml(str) {
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function compressToBase64(input) {
+    if (input == null || input === '') return '';
+    const inputStr = String(input);
+    const compressed = lzw_encode(inputStr);
+    return btoa(compressed);
+}
+
+function decompressFromBase64(input) {
+    if (input == null || input === '') return '';
+    try {
+        const decoded = atob(input);
+        return lzw_decode(decoded);
+    } catch (e) {
+        return '';
+    }
+}
+
+function lzw_encode(str) {
+    const dict = {};
+    const data = (str || '').split('');
+    let phrase = data[0] || '';
+    const out = [];
+    let code = 256;
+
+    for (let i = 1; i < data.length; i++) {
+        const curr = data[i];
+        const phraseCurr = phrase + curr;
+        if (dict[phraseCurr] != null) {
+            phrase = phraseCurr;
+        } else {
+            out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+            dict[phraseCurr] = code++;
+            phrase = curr;
+        }
+    }
+
+    if (phrase !== '') {
+        out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+    }
+
+    let result = '';
+    for (let i = 0; i < out.length; i++) {
+        result += String.fromCharCode((out[i] >> 8) & 0xff, out[i] & 0xff);
+    }
+    return result;
+}
+
+function lzw_decode(str) {
+    const data = [];
+    for (let i = 0; i < str.length; i += 2) {
+        data.push((str.charCodeAt(i) << 8) | str.charCodeAt(i + 1));
+    }
+
+    const dict = [];
+    let curr = String.fromCharCode(data[0]);
+    let old = curr;
+    const out = [curr];
+    let code = 256;
+
+    for (let i = 1; i < data.length; i++) {
+        const currCode = data[i];
+        let phrase;
+        if (currCode < 256) {
+            phrase = String.fromCharCode(currCode);
+        } else {
+            phrase = dict[currCode] ? dict[currCode] : old + old.charAt(0);
+        }
+        out.push(phrase);
+        dict[code++] = old + phrase.charAt(0);
+        old = phrase;
+    }
+
+    return out.join('');
+}
+
+function compressIfUseful(text) {
+    const sanitized = String(text || '');
+    if (!sanitized) return '';
+    const compressed = '#LZ#' + compressToBase64(sanitized);
+    return compressed.length < sanitized.length ? compressed : sanitized;
+}
+
+function decompressIfNeeded(text) {
+    const value = String(text || '');
+    if (value.startsWith('#LZ#')) {
+        return decompressFromBase64(value.slice(4)) || '';
+    }
+    return value;
+}
+
+function sanitizeCommentHTML(html) {
+    const temp = document.createElement('div');
+    temp.innerHTML = html || '';
+
+    const badTags = new Set(['script', 'style', 'img', 'iframe', 'object', 'embed', 'picture', 'svg', 'canvas', 'table', 'tbody', 'thead', 'tfoot', 'tr', 'td', 'th', 'video', 'audio', 'form', 'input', 'button', 'select', 'textarea', 'label', 'option']);
+
+    function sanitizeNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            return escapeHtml(node.nodeValue || '')
+                .replace(/[\u200B\u200C\u200D\uFEFF]/g, '')
+                .replace(/\u00A0/g, ' ');
+        }
+
+        if (node.nodeType !== Node.ELEMENT_NODE) {
+            return '';
+        }
+
+        const tag = node.tagName.toLowerCase();
+        if (badTags.has(tag)) {
+            return '';
+        }
+
+        if (tag === 'a') {
+            const href = (node.getAttribute('href') || '').trim();
+            const safeHref = href.replace(/[\u0000-\u001F\u007F]+/g, '').replace(/\s+/g, ' ');
+            if (!/^https?:\/\//i.test(safeHref) && !/^mailto:/i.test(safeHref)) {
+                return sanitizeChildren(node);
+            }
+            const text = sanitizeChildren(node).trim() || escapeHtml(safeHref);
+            return `<a href="${escapeHtml(safeHref)}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+        }
+
+        if (tag === 'br') {
+            return '<br>';
+        }
+
+        return sanitizeChildren(node);
+    }
+
+    function sanitizeChildren(parent) {
+        return Array.from(parent.childNodes).map(sanitizeNode).join('');
+    }
+
+    let cleaned = sanitizeChildren(temp)
+        .replace(/\s{2,}/g, ' ')
+        .replace(/((&nbsp;)|\u00A0)/g, ' ')
+        .replace(/(<br>\s*){2,}/g, '<br>')
+        .replace(/^(<br>)+|(<br>)+$/g, '')
+        .trim();
+
+    return cleaned;
+}
+
+function sanitizePlainText(text) {
+    const escaped = escapeHtml(text || '');
+    return escaped.replace(/\r\n|\r|\n/g, '<br>');
+}
+
+document.addEventListener('click', function(e) {
+    const link = e.target.closest('a');
+    if (link && e.target.closest('.comment-area')) {
+        e.preventDefault();
+        window.open(link.href, '_blank');
+    }
+
+    const evidence = e.target.closest('.evidence-box');
+    if (evidence && evidence.id) {
+        activeEvidenceBox = evidence.id.replace(/^evidence-box-/, '');
+    }
+});
+
+document.addEventListener('focusin', function(e) {
+    const evidence = e.target.closest('.evidence-box');
+    if (evidence && evidence.id) {
+        activeEvidenceBox = evidence.id.replace(/^evidence-box-/, '');
+    }
+});
+
+document.addEventListener('paste', function(e) {
+    const commentArea = e.target.closest('.comment-area');
+    const evidenceBox = e.target.closest('.evidence-box');
+    const clipboard = e.clipboardData || window.clipboardData;
+    const items = Array.from((clipboard && clipboard.items) || []);
+    const fileItem = items.find(item => item.type.startsWith('image/') || item.type === 'application/pdf');
+
+    if (fileItem && (evidenceBox || activeEvidenceBox)) {
+        e.preventDefault();
+        const cleanId = evidenceBox ? evidenceBox.id.replace(/^evidence-box-/, '') : activeEvidenceBox;
+        const file = fileItem.getAsFile();
+        if (file) {
+            if (!currentAttachments[cleanId]) currentAttachments[cleanId] = [];
+            const attachment = {
+                type: file.type.startsWith('image/') ? 'image' : 'pdf',
+                title: file.name || (file.type.startsWith('image/') ? 'clipboard-image.png' : 'clipboard-document.pdf'),
+                src: '',
+                url: null,
+                status: IMGBB_API_KEY && !IMGBB_API_KEY.includes('BURAYA') ? 'uploading' : 'pending'
+            };
+            currentAttachments[cleanId].push(attachment);
+            renderPreviews(cleanId);
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                attachment.src = evt.target.result;
+                renderPreviews(cleanId);
+
+                if (attachment.type === 'image') {
+                    if (IMGBB_API_KEY && !IMGBB_API_KEY.includes('BURAYA')) {
+                        uploadImageToImgbb(attachment, cleanId);
+                    }
+                } else {
+                    uploadFileToDrive(attachment, cleanId, file.type);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+        return;
+    }
+
+    if (!commentArea) return;
+
+    e.preventDefault();
+    let pasteHtml = clipboard.getData('text/html');
+    let insertValue = '';
+
+    if (pasteHtml) {
+        insertValue = sanitizeCommentHTML(pasteHtml);
+    }
+
+    if (!insertValue) {
+        const plainText = clipboard.getData('text/plain') || '';
+        insertValue = sanitizePlainText(plainText);
+    }
+
+    if (insertValue) {
+        document.execCommand('insertHTML', false, insertValue);
+    }
+});
+
+
+const kidrData={"B.1.1": {"od": "Programların tasarım ve onay süreçleri sistematik olarak izlenmekte ve ilgili paydaşlarla birlikte değerlendirilerek iyileştirilmektedir.", "p": ["Avrasya Üniversitesi bünyesinde yürütülen Akreditasyona Ön Hazırlık çalışmaları kapsamında yer alan tüm eğitim–öğretim programlarının tasarımında, Türkiye Yükseköğretim Yeterlilikleri Çerçevesi (TYÇÇ), Ulusal Çekirdek Eğitim Programları (UÇEP), eğitim programlarının akademik ve mesleki temel alan yeterlilikleri ve YOKAK tarafından yetkilendirilen akreditasyon kuruluşlarının (FEDEK, FTR-AD, HEPDAK, İLEDAK, MEDEK, MİAK, MÜDEK, SABAK, STAR, SPORAK, TAPLAK) hazırladığı programlar için geliştirilmiş olan akreditasyon ölçütleri de dikkate alınmaktadır. Üniversitemizde yer alan programların amaçları (OD4) ve öğrenme çıktıları (kazanımları) (OD4) belirtilmiş (OD4) oluşturulmuş, TYÇÇ ile uyumu , Programı Bilgileri, Program İçeriği, Bölüm Başkanı, Tarihçe, Kazanılan Derece, Kabul Koşuları, Üst Kademeye Geçiş, Mezuniyet Koşuları, Mezun İstihdam Olanakları, Ölçme ve Değerlendirme, Eğitim Türü Amaçlar ve Hedefler, Program Yeterlilikleri, Dersler, Ders ve Program Yeterlilikleri Matrisi, TYÇÇ ve Program Yeterlilikleri Matrisin kapsayan Bilgi Paketleri üniversitemiz resmi web sitesi üzerinde yer alan Bologna adresi (OD4) üzerinden kamuoyuna ilan edilmiştir. Fen Edebiyat Fakültesi Psikoloji Programı (OD4) ve Türk Dili Edebiyatı Programı (OD4) temel yeterlilikler çerçevesine yerleştirilmiştir.", "Programların yeterlilikleri belirlenirken kurumun misyon vizyonu ile yetkilendirilmiş akreditasyon kuruluşlarının belirlediği ölçütler göz önünde bulundurulmuştur. Ders Bilgi Paketleri her akademik yılın sonunda iç/dış paydaşlardan alınan geri bildirimler kapsamında yeniden gözden geçirilerek güncellenmektedir. Bologna Süreci ile uyumlu olarak hazırlanan Ders Bilgi Paketlerinde, her derse ait öğrencilerin kazanması beklenen bilgi ve beceriler konu temelinde tanımlanmıştır. Ders kapsamında öğrencilerin elde etmesi gereken kazanımlar, Ders Bilgi Paketlerinde dersin öğrenme çıktıları başlığı altında belirlenmiştir (OD4).", "Üniversitemizde yeni bölüm/anabilimdalı/program açılması işlemleri YÖK ün", "belirlediği tarih aralığında bir sonraki eğitim-öğretim yılı için YÖK’ün program açma ölçütleri çerçevesinde gerçekleştirilmektedir. Senato tarafından uygun görülen lisans/önlisans/lisansüstü program açma/ilk defa öğrenci alımı talebi YÖK’ün belirlediği tarihler arasında YÖKSİS üzerinden ABAYS sistemine girilmektedir.", "Akademik programlarda yeni ders açma veya mevcut dersleri değiştirme talepleri, \"Ders Açma/Değiştirme Formu\" üzerinden kurumsallaştırılmıştır. Bu süreçte; dersin amacı, program öğrenme çıktılarıyla (Örn: PÇ1, PÇ2) eşleşmesi, varsa ön koşulları ve ara sınav/yarıyıl sonu sınavlarını da kapsayan 15 haftalık ders içeriği detaylandırılarak ilgili birim kurullarının onayına sunulmaktadır [1_OD4]. İşletilen bu onay mekanizması, öğretim programlarının kurumun eğitim politikasıyla çelişmeden, standart bir akademik yapıda tasarlanmasını nesnel olarak güvence altına almaktadır."], "ev": [{"n": 1, "l": 3, "f": "B.1.1-Ders_acma_degistirme_formu.pdf"}]}, "B.1.2": {"od": "Programlarda ders dağılım dengesi izlenmekte ve iyileştirilmektedir.", "p": ["Avrasya Üniversitesi programların ders dağılım dengesini sağlamaya yönelik ilke ve yöntemler tanımlanmış olup, müfredat yapılarında zorunlu-seçmeli ve alan içi-alan dışı ders dengesi titizlikle gözetilmektedir. Öğrencilerin farklı disiplinleri tanıma imkânı bulmaları ve disiplinlerarası yetkinlik kazanmaları amacıyla programlarda seçmeli ders oranının en az %25 olması güvence altına alınmıştır.", "Programlardaki ders dağılım dengesinin izlenmesi ve hedeflerle uyumunun denetlenmesi amacıyla güçlü bir kurumsal otokontrol mekanizması işletilmektedir. Kurumdaki tüm eğitim-öğretim programları, kendilerini akredite edecek yetkili ajansların (FEDEK vb.) belirlediği öz değerlendirme raporu şablonlarını temel alarak yıllık faaliyet raporlarını hazırlamaktadır. Bu süreç kapsamında, her program kendi müfredat yapısını ilgili akreditasyon ajansının şablonunda yer alan ders dağılım dengesi tablosuna her yıl düzenli olarak işlemek ve ajansın belirlediği ders dağılım kriterlerini eksiksiz bir biçimde sağlamak zorundadır.", "Kurum genelinde standartlaştırılan bu sistematik izleme ve raporlama uygulaması, son iki yıldır tüm programlarımızda hiçbir aksaklık yaşanmadan başarıyla devam etmektedir. İşletilen bu mekanizma sayesinde programların ders dağılım dengesi ile öğrenci iş yükleri periyodik olarak izlenmekte, akreditasyon ölçütlerinden sapma riski taşıyan durumlar anında tespit edilerek veri temelli müfredat iyileştirmelerine dönüştürülmektedir [1_OD4].", "Alan zorunlu, seçmeli, alan dışı seçmeli dersler ile ilgili sunulan imkanlara ek olarak öğrencilerimizin akademik gelişimlerini desteklemek amacıyla çevrimiçi sertifika programlarına destek verilmektedir. Bu bağlamda AYEUM veri tabanına abonelik her yıl yenilenmektedir (OD3).(OD4)."], "ev": [{"n": 1, "l": 4, "f": "B.1.2-ornek_ders_dagılım_dengesi_formu.pdf"}]}, "B.1.3": {"od": "Ders kazanımlarının program çıktılarıyla uyumu izlenmekte ve iyileştirilmektedir.", "p": ["Avrasya Üniversitesi'nde ders öğrenme kazanımlarının program çıktılarıyla uyumu, salt bir dokümantasyon (matris) düzeyinde bırakılmayarak sistematik ve veri temelli bir yaklaşımla ölçme-değerlendirme süreçlerine entegre edilmiştir. Program öğrenme çıktıları ile ders öğrenme kazanımları Bologna Bilgi Paketi sistemi üzerinden tanımlanmış olup; her dersin izlencesinde ilgili program çıktısına katkı düzeyi açık biçimde ilan edilerek yapılandırılmıştır [2_OD3].(OD3)", "Kurum, tanımlanan bu uyumu izlemek ve nesnel verilere dayandırmak amacıyla Öğrenci Bilgi Sistemi (Proliz) altyapısına \"Sınav Kazanımı Akreditasyon Uyum ve Raporlama İşlemleri Modülü\" ile \"Akademisyen Soru Bazlı Not Girişi Modülü\"nü entegre etmiştir. Ölçme ve değerlendirme süreçlerinde kullanılan araçlar sadece klasik sınavlarla sınırlı tutulmamış; bitirme çalışmaları, staj/uygulama raporları ve AKTS iş yükü anketleri de program çıktılarıyla eşleştirilerek matrislerle kayıt altına alınmıştır. Yenilikçi Proliz sistemi üzerinden her bir sınav sorusunun veya ödevin ilgili kazanıma etki oranı tanımlanmakta; kazanımların gerçekleşme düzeyleri ders, program ve öğrenci bazında algoritmik olarak hesaplanarak raporlanmaktadır [1_OD4].", "Ölçme-değerlendirme sürecindeki bu verilerin güvenilirliğini artırmak amacıyla, uygulamayı yapacak öğretim elemanlarının \"Eğiticilerin Eğitimi\" programlarını tamamlamaları zorunlu tutulmuştur. Ayrıca Kurum, kazanımları sadece akademik müfredatla sınırlamayan bütüncül bir kalite vizyonu geliştirmiştir. Öğrencilerin ders dışı sosyal ve bilimsel aktivitelerle elde ettikleri becerilerin program çıktılarına katkısı da ölçülerek, öğrencilere mezuniyet transkriptine ek olarak \"Yetkinlik Temelli Sosyal Transkript\" verilmesi güvence altına alınmıştır [_OD4].", "Sistemsel verilerle elde edilen kazanım analizleri, düzenli olarak uygulanan dış paydaş anketleri ve öğrenci geri bildirimleriyle çapraz değerlendirmeye tabi tutulmaktadır [3_OD4]. Kurumda program çıktıları ve müfredat güncellemeleri doğrudan dış paydaşların sektörel beklentilerine göre şekillenmektedir. Örneğin, 2025 yılı bahar döneminde gerçekleştirilen Diş Protez Teknolojisi dış paydaş toplantısında alınan kararlar doğrultusunda program çıktıları güncel teknolojik gelişmeleri kapsayacak şekilde revize edilmiş ve ders içeriklerinde “oklüzör” konularının ağırlığı artırılmıştır [4_OD4]. Benzer şekilde Odyoloji Bölümü dış paydaş toplantısı sonucunda müfredat, pratik cihaz teknolojisi modülleriyle zenginleştirilerek program çıktılarının sahadaki karşılığı güvence altına alınmıştır Elde edilen analitik bulgular doğrultusunda, düşük gerçekleşme gösteren kazanımlar ile yetersiz desteklenen program çıktıları hızla tespit edilmektedir. Bu tespitler doğrultusunda bölüm ve fakülte kurullarında (Örn: FEDEK akreditasyon çalışmaları kapsamında FEF müfredat güncellemeleri) ders içerikleri, öğretim yöntemleri ve ölçme-değerlendirme yaklaşımlarında kanıta dayalı kurumsal güncellemeler resmiyet kazanmaktadır [5_OD4]."], "ev": [{"n": 1, "l": 3, "f": "B.1.3-soru_kazanim_eslesme.pdf"}, {"n": 2, "l": 4, "f": "B.1.3-FEF_Program_Çıktısı_Matrisleri.pdf"}, {"n": 3, "l": 4, "f": "B.1.3-SHMYO_Agız_ve_Dis_Saglıgı_Paydas_Toplantısı.pdf"}, {"n": 5, "l": 4, "f": "B.1.3-SBF_Ic_Paydas_Dıs_Paydas_Ogrenci_Geri_Bildirim_Toplantıları.pdf"}]}, "B.1.4": {"od": "Programlarda öğrenci iş yükü izlenmekte ve buna göre ders tasarımı güncellenmektedir.", "p": ["Kurumda eğitim-öğretim süreçleri, öğrenci merkezli yaklaşım doğrultusunda tamamen öğrenci iş yükü esasına dayalı olarak tasarlanmaktadır. Avrasya Üniversitesi EğitimÖğretim ve Sınav Yönetmeliği (OD3).(OD3) ve AKTS Hesaplama Kılavuzu çerçevesinde, 1 AKTS kredisi 25-30 saatlik öğrenci iş yüküne karşılık gelecek şekilde standartlaştırılarak güvence altına alınmıştır [1_OD3]. Derslerin AKTS değerleri belirlenirken; öğrencilerin sınıf içi (teorik, uygulama, laboratuvar) ve sınıf dışı (ödev, proje, sunum, sınava hazırlık, mesleki uygulama, bireysel çalışma vb.) gerçekleştirdikleri tüm eğitim-öğretim faaliyetleri dikkate alınmakta ve şeffaf bir hesaplama yapılmaktadır.", "Derslerin iş yükü hesaplamaları, Bologna Bilgi Paketi sistemi üzerinden yürütülmekte; her bir ders için iş yükü kalemleri, tekrar sayıları ve süreleri ayrıntılı olarak ilan edilmektedir (OD3). Bu sistematik yapı sayesinde derslerin AKTS kredileri ile öğrenme kazanımları ve ölçme-değerlendirme süreçleri arasında tam bir uyum sağlanmakta; haftalık iş yükü dağılımları, öğrencilerin akademik yoğunluğunu dengeleyecek bütüncül bir yaklaşımla oluşturulmaktadır.", "Öğrenci iş yüküne dayalı tasarımın sahadaki etkililiği ve gerçekçiliği salt planlama aşamasında bırakılmamakta; her yarıyıl sonunda sistemsel olarak uygulanan \"AKTS Öğrenci İş Yükü Değerlendirme Anketi\" aracılığıyla düzenli olarak izlenmektedir [2_OD4]. Öğrencilerin ders kapsamındaki faaliyetlere fiilen ayırdıkları zaman ve iş yüküne ilişkin algıları, anket verileri üzerinden sistematik biçimde analiz edilmektedir.", "Elde edilen anket analiz sonuçları ve ölçme-değerlendirme başarı düzeyleri, birim ve bölüm kurullarında düzenli olarak değerlendirilmektedir. Öngörülen iş yükü ile öğrencilerin bildirdiği gerçekleşen iş yükü arasında sapma tespit edilen derslerin bilgi paketlerindeki iş yükü bileşenleri ve AKTS değerleri bu kurul kararlarıyla güncellenmektedir (PUKÖ - Önlem Alma) [4_OD4]. Kurulan bu entegre izleme ve güncelleme mekanizması, Kurumda öğrenci iş yüküne dayalı tasarım yaklaşımının yalnızca başlangıçta yapılan bir planlama olmadığını; düzenli olarak izlenen, değerlendirilen ve en üst olgunluk düzeyinde (OD4) sürekli iyileştirilen dinamik bir kalite güvencesi sistemi olarak işletildiğini kanıtlamaktadır."], "ev": [{"n": 1, "l": 3, "f": "B.1.4-AKTS_Is_Yuku_Hesaplama_Kilavuzu.pdf"}, {"n": 2, "l": 4, "f": "B.1.4-SHMYO_Is_Yuku_AKTS_Anketi_ve_Karari_KVKK.pdf"}]}, "B.1.5": {"od": "Program çıktıları bu mekanizmalar ile izlenmekte ve ilgili paydaşların görüşleri de alınarak güncellenmektedir.", "p": ["Programların izlenmesi ve güncellenmesi süreçlerinde veri temelli yaklaşımlar benimsenmektedir. Bu kapsamda program çıktılarının doğrudan ölçülmesini desteklemek amacıyla Öğrenci Bilgi Sistemi üzerine entegre edilen sınav kazanımı ve ders öğrenme çıktısı bazlı akreditasyon uyum modülleri devreye alınmıştır. Söz konusu modüller aracılığıyla sınav soruları ders öğrenme çıktıları ile eşleştirilmekte ve yapılandırılmış değerlendirme yöntemleri kullanılarak program çıktılarının gerçekleşme düzeyi analiz edilmektedir. Elde edilen bulgular program öz değerlendirme raporlarında kullanılmakta ve müfredat güncelleme süreçlerine veri temelli girdi sağlamaktadır. Modülün ilk uygulamaları 2024-2025 eğitim-öğretim yılı güz yarıyılı sonunda gerçekleştirilmiş olup elde edilen sonuçlar doğrultusunda bazı derslerde ölçme-değerlendirme yöntemlerinin ve içerik tasarımlarının gözden geçirilmesine yönelik çalışmalar başlatılmıştır. Bu yaklaşım program geliştirme süreçlerinde sürekli iyileştirme ve kalite güvencesi kültürünün güçlenmesine katkı sunmaktadır.", "Fen Edebiyat Fakültesi bünyesinde yer alan iki bölüm için akreditasyon hazırlık çalışmalarının tamamlanmasının ziyareti (OD4) ardından FEDEK tarafından değerlendirme gerçekleştirilmiş ve Fen Edebiyat Fakültesi Psikoloji Programı ile Türk Dili ve Edebiyatı Programlarımız 5 yıl süreyle akredite edilmiştir. 2024-2025 Bahar dönemi sonrasında da Avrasya Üniversitesi Rektörlüğü tarafından odak grup toplantıları yapılmış (her yarıyıl acılan dersler, öğrenci sayıları, baş ̧ arı durumları, geri besleme sonucları, ders ç eş ̧ itliliği, lab uygulama, lisans/lisansüstü dengeleri, iliş ki kesme sayıları/nedenleri vb.) akademisyenlerin görüşleri ile birlikte dolaylı da olsa öğrencilerin derslerde yada ofis saatlerinde ilettikleri istekleri de değerlendirilmiştir. Bu bağlamda yapılan geri bildirimler sonrasında 2024-2025 Eğitim Öğretim yılında Ağırlıklı Genel Not Ortalamasına bağlı burs kesintisi Müteveli Heyeti kararıyla kaldırılmıştır (OD4). Üniversite genelinde uygulanan dolaylı erişim ölçümlerinin yanı sıra, Öğrenci bilgi Sistemi üzerinde kullanılan \"Sınav Kazanımı Akreditasyon Uyum ve Raporlama İşlemleri Modülü\" ve \"Akademisyen Soru Bazlı Not Girişi Anket Modülü\" satın alınmış ve ders çıktılarını sınav sorularıyla eşleştirerek program çıktılarının doğrudan metotlar ile ölçümüne imkân sağlanmıştır. İlgili modüller vasıtasıyla ilk ölçümler 2024-2025 Güz dönemi sonunda gerçekleştirilmiştir. Her program ve ders icin (örgün, uzaktan, karma, aç ıktan) program amaç larının ve öğrenme ç ıktılarının ̧ izlenmesi planlandığı ş ekilde gercekleş ̧ mektedir. Bu sü recin isleyişi ve sonucları ̧ paydaş larla birlikte değerlendirilmektedir (OD4) , (OD4) . Eğ itim ve ö ğ retim ile ilgili istatistiki göstergeler (her yarıyıl acılan dersler, öğrenci sayıları, baş ̧ arı durumları, Öğretim Elemanı ve Ders Değerlendirme Anketleri, geri besleme sonucları, derş ceş ̧ itliliği, laboratuvar, uygulama, lisans/lisansüstü dengeleri, iliş ki kesme sayıları/nedenleri vb.) periyodik ve sistematik ş ekilde izlenmekte, tartış ılmakta, değerlendirilmekte, karş ılaş tırılmakta ve kaliteli eğitim yönündeki geliş im sü rdurü lmektedir (ODR4) . Programların izlenmesi ve güncellenmesi çalışmaları", "kapsamında tüm lisans/ön lisans programlarının için, senelik olarak, belirlenen 5 başlık (Program Öz Değerlendirme Raporu, Paydaşlar, Etkinlikler, Protokoller, Anketler) kapsamında çalışmalarını gerçekleştirmeleri ve üst yönetime sunmaları beklenmektedir. Bu kapsamda programların izleme ve iyileştirme sürecinin sistemli bir şekilde yürütülmesini, iyileştirmelerin kayıt altına alınmasını ve takibini garanti altına alınmasını sağlayan programlar özelinde gerçekleştirilen tüm iş/işlemlere ait üst yönetim kalite ve akreditasyon geri bildirim toplantıları yapılmaktadır. Gerçekleştirilen iyileştirmeler: 2024-2025 Eğitim Öğretim Yılı itibariyle tüm önlisans/lisans programları tarafından Öz değerlendirme raporları ilgili programın akreditasyonu için yetkilendirilmiş kuruluşun şablon öz değerlendirme raporlarına göre yıllık olarak hazırlanmakta ve iyileştirmeler bir sonraki yılın raporuna yansıtılmaktadır. 2023-2024 eğitim Öğretim yılında Akreditasyon başvurusu yapılan Fen Edebiyat Fakültesi Psikoloji ve Türk Dili Edebiyatı Programları FEDEK tarafından 5 yıl süreyle tam akredite edilmiştir (OD4).", "Danışma kurulu kararıyla mezun yetkinlikleri doğrultusunda ders revizyonu yapılmıştır. YÖK talebi (dış geri bildirim) doğrultusunda müfredata 'Bağımlılıkla Mücadele' dersi eklenerek programda iyileştirme yapılmıştır (5_OD4). Dış paydaş geri bildirimleri sonucu, derslerin hastane ortamında yürütülmesine karar verilerek müfredat işleyişinde iyileştirme sağlanmıştır (6_OD4)."], "ev": [{"n": 1, "l": 4, "f": "B.1.5-fef_danisma_kurulu.pdf"}, {"n": 2, "l": 4, "f": "B.1.5-shmyo_ingilizce_revizyon.pdf"}, {"n": 3, "l": 4, "f": "B.1.5-shmyo_mezun_izleme.pdf"}, {"n": 4, "l": 4, "f": "B.1.5-shmyo_isveren_analizi.pdf"}, {"n": 5, "l": 4, "f": "B.1.5-sbf_yeni_ders_eklenmesi.pdf"}, {"n": 6, "l": 4, "f": "B.1.5-sbf_dis_paydas_toplantisi.pdf"}]}, "B.1.6": {"od": "Kurumda eğitim ve öğretim yönetim sistemine ilişkin uygulamalar izlenmekte ve izlem sonuçlarına göre iyileştirme yapılmaktadır.", "p": ["Avrasya Üniversitesi'nde eğitim ve öğretim süreçlerinin yönetimi, stratejik planda belirlenen kurumsal hedefler doğrultusunda bütüncül bir yaklaşımla şekillenmektedir. Bu süreçlerin icrası; Rektörlük makamı, Eğitim Öğretimden Sorumlu Rektör Yardımcılığı, Dekanlıklar ve Yüksekokul Müdürlükleri tarafından müştereken yürütülmektedir. Üniversite yönetişim yapısı içerisinde, Dekanlar, Enstitü ve Yüksekokul Müdürlerinden oluşan Akademik Birim Amirleri, Rektör başkanlığında periyodik olarak toplanarak süreçlerin uyumunu ve işleyişini yürürlükteki yasal mevzuatlar kapsamında denetlemektedir.", "Eğitim ve öğretim süreçlerini yönetmek üzere güçlü bir organizasyonel yapılanma (Üniversite Eğitim, Ölçme ve Değerlendirme Komisyonu, Sürekli Eğitim Merkezi, Uzaktan Eğitim Araştırma ve Uygulama Merkezi vb.) kurulmuş olup, eğitim faaliyetlerinin veri temelli yürütülmesi için Öğrenci Bilgi Sistemi (OBS), Öğrenme Yönetim Sistemi (TOLTEK LMS) ve Birim İç Değerlendirme Raporları Yükleme", "Sistemi entegre bir biçimde kullanılmaktadır. Eğitim ve öğretim programlarının tasarlanması, yürütülmesi, değerlendirilmesi ve güncellenmesi faaliyetlerine ilişkin ilkeler yasal mevzuatlarla belirlenmiş ve tüm süreci planlayan akademik takvim kamuoyuna ilan edilmiştir. Programlarda öğrenme kazanımları, öğretim programı (müfredat), eğitim hizmetinin verilme biçimi (örgün, uzaktan, karma, açıktan), öğretim yöntemleri ve ölçme-değerlendirme uyumu ile tüm bu süreçlerin koordinasyonu üst yönetim tarafından düzenli olarak takip edilmektedir.", "Kurumda eğitim ve öğretim yönetim sistemine ilişkin uygulamalar sistematik olarak izlenmekte ve izlem sonuçlarına göre operasyonel iyileştirmeler hayata geçirilmektedir. Dijitalleşme süreçleri kapsamında Öğrenci Bilgi Sistemi'nin kabiliyetleri büyük ölçüde artırılmış; sisteme Sınav Kazanımı Akreditasyon Uyum ve Raporlama İşlemleri Modülü, Akademisyen Sınav Not Girişi (Ders Öğrenme Çıktısı Bazlı - Akreditasyon) Modülü, Sosyal Transkript On-Line Başvuru ve Değerlendirme Modülü, Çap/Yandal Başvuru Modülü, Staj Başvuru ve Takip Otomasyonu ile Yatay Geçiş On-Line Başvuru ve Otomatik Değerlendirme Modülü gibi birçok yeni dijital altyapı eklenmiştir. Temel eğitim-öğretim adımlarının ve öğrenci iş/işlemlerinin büyük veri kaynağı olarak dijitalleştirilerek güvence altına alınmıştır."], "ev": []}, "B.2.1": {"od": "Öğrenci merkezli uygulamalar izlenmekte ve ilgili iç paydaşların katılımıyla iyileştirilmektedir.", "p": ["Avrasya Üniversitesi'nde eğitim-öğretim faaliyetleri, bilginin pasif aktarımından ziyade derin öğrenmeyi, öğrenci motivasyonunu ve aktif katılımı merkeze alan etkileşimli yöntemlerle yürütülmektedir. Tüm eğitim türlerinde (örgün, uzaktan, karma) derslerin doğasına uygun öğrenci merkezli öğretim yöntemleri (ters yüz öğrenme, proje temelli öğrenme, vaka analizi, beyin fırtınası, istasyon, rol oynama vb.) Bologna Bilgi Paketi üzerinden ilan edilerek güvence altına alınmaktadır (OD3) . Öğrencileri araştırma süreçlerine ve aktif öğrenmeye dahil etmek amacıyla dersler, dijital etkileşim araçlarıyla teknolojik olarak zenginleştirilmektedir. Sınıf Yönetimi dersinde Mentimeter gibi dijital etkileşim araçları kullanılarak öğrenciyi merkeze alan aktif öğrenme yöntemleri uygulanmıştır (1_OD3)", "Öğrenciyi öğrenme sürecinin aktif öznesi kılan bu yaklaşım, Kurum bünyesindeki farklı akademik birimlerde çok disiplinli ve saha odaklı uygulamalarla hayata geçirilmektedir. Örneğin; Türk Dili ve Edebiyatı (TDE) öğrencileri ile TÖMER öğrencileri arasında \"gösterip yaptırma ve örnek olay\" teknikleriyle gerçekleştirilen çok kültürlü akran öğrenmesi, SHMYO akran deneyim paylaşımı etkinleri [3_OD4].[4_OD4], İngilizce Mütercim Tercümanlık bölümünde uygulanan akademik film çevirisi görevleri, Psikoloji programındaki rol canlandırma (role-playing) etkinlikleri ve Çocuk Gelişimi programının \"Geleceğimiz Çocuklarımızda – Oyun Alanları Oluşturma\" sosyal sorumluluk projeleri, teorik bilginin yetkinliğe dönüştürüldüğü en güçlü öğretim uygulamalarıdır.", "Uygulanan öğretim yöntem ve tekniklerinin etkililiği, öğrenci geri bildirim toplantıları ve anketler aracılığıyla periyodik olarak izlenmektedir. Örneğin, Meslek Yüksekokulunda gerçekleştirilen öğrenci geri bildirim toplantılarında teorik bilginin sahadaki karşılığını görmenin motivasyonu yükselttiği yönündeki öğrenci talepleri dikkate alınmış; bölüm kurullarında yapılan değerlendirmeler sonucunda müfredattaki \"vaka analizi, proje ve saha destekli uygulamaların ağırlığının artırılmasına\" resmi olarak karar verilmiştir.", "Ayrıca öğretim elemanlarının bu yenilikçi yöntemleri derslere etkili biçimde entegre edebilmeleri için \"Eğiticilerin Eğitimi Programı\" uygulanmakta olup, tüm öğretim elemanlarının bu pedagojik eğitimi tamamlaması zorunlu tutulmuştur. Geri bildirim mekanizmaları ve eğiticilerin kapasite gelişimiyle desteklenen bu sistem, Kurumda öğrenci merkezli öğretim kültürünün en üst olgunluk düzeyinde yönetildiğini ve sürekli iyileştirildiğini kanıtlamaktadır (OD4).(OD4).(OD4).(OD4).", "Başarılı/Başarısız sisteminden 100'lük harf notu sistemine geçilerek ölçmedeğerlendirme adaletinde iyileştirme yapılmıştır (2_OD4). Detayları D.2.1. başlığında verilen \"Geleceğimiz Çocuklarımızda – Oyun Alanları Oluşturma ve Sosyal Sorumluluk Projesi\" vb. gibi etkinliklerle öğrencilerimiz teorik bilgiyi sahada sosyal sorumluluk projeleriyle uygulamaya dökmektedir."], "ev": [{"n": 1, "l": 3, "f": "B.2.1-sbf_aktif_ogrenme.pdf"}, {"n": 2, "l": 4, "f": "B.2.1-sbf_harf_notu_gecis.pdf"}, {"n": 3, "l": 4, "f": "B.2.1-shmyo_akran_soylesisi.pdf"}, {"n": 4, "l": 4, "f": "B.2.1-Staj_Akran_Egitimi_Etkinligi.pdf"}]}, "B.2.2": {"od": "Öğrenci merkezli ölçme ve değerlendirme uygulamaları izlenmekte ve ilgili iç paydaşların katılımıyla iyileştirilmektedir.", "p": ["Avrasya Üniversitesinin tüm Fakülte ve Yüksekokul ve Meslek Yüksekokullarında ön lisans, lisans ve yüksek lisans düzeyinde öğrenim gören öğrencilerin başarı durumları mutlak değerlendirme sistemine göre belirlenmektedir. Avrasya Üniversitesi ölçme ve değerlendirmedeki ana ilkelerini, sınav türlerini, sınav türlerinin geçme notuna olan katkılarını “Avrasya Üniversitesi Önlisans ve Lisans Eğitim-Öğretim ve Sınav Yönetmeliği” (OD4) ve “Avrasya Üniversitesi Lisansüstü Eğitim-Öğretim ve Sınav Yönetmeliği” ile belirlemiş ve resmi web sitesi üzerinden ilan etmiştir (OD4).", "Öğrenci merkezli ölçme ve değerlendirme, yetkinlik ve performans temelinde yürütülmekte ve öğrencilerin kendini ifade etme olanakları mümkün olduğunca çeşitlendirilmektedir. Ölcme ve değerlendirmenin sürekliliği ç oklu sınav olanakları ve ̧ bazıları sürec odaklı (formatif) ödev, proje, portfolyo gibi yöntemlerle sağlanmaktadır. ̧ Ders kazanımlarına ve eğitim türlerine (örgün, uzaktan, karma) uygun sınav yö ntemleri planlamakta ve uygulanmaktadır. Sınav uygulama ve güvenliği (örgün/çevrimiçi sınavlar, dezavantajlı gruplara yönelik sınavlar) mekanizmaları bulunmaktadır.", "Bir öğrencinin mutlak başarı puanı, o derse ait dönem içi notu ile yarıyıl sonu puanının,", "belirli oranlarda katkısından oluşur. Yarıyıl içi notunun ağırlığı %40 ve yarıyıl sonu sınavının ağırlığı %60’tır. Uygulamalı ve teorik ağırlık taşıyan derslerde sınavlar %50 teori ve %50 uygulama olacak şekilde yapılabilir. Yarıyıl içi notu tespitinde en az %20 ağırlığa sahip sınav ara sınav haftasında yapılır. Öğretim elemanı gerekli görürse diğer %20’lik değerlendirme için önceden ilan edilmiş takvim doğrultusunda ödev, proje, kısa sınav, seminer, sunum, laboratuvar uygulaması, arazi çalışması, eskiz, rapor ve benzeri çalışmalar yaptırabilir. Bu değerlendirmeler ders saatinde yapılır. Bu tür çalışmalar yaptırılmadığında ara sınav %40 ağırlığa sahip olur. Başarı notlarının ifade ettikleri başarı dereceleri ve katsayıları, 4.00 üzerinden hesaplanır. Bu değerlendirme sonunda, her öğrenciye dersi veren öğretim elemanı tarafından aşağıdaki tabloda açılımı ve kat sayıları belirtilen harf notlarından biri başarı notu olarak takdir olunur.", "Bir dersin başarı notunun hesaplanabilmesi için dönem sonu/bütünleme sınavından 100 üzerinden en az 50 puan alınması zorunludur. Dönem sonu/bütünleme sınavından 50 puan altında alınması durumunda başarı notu hesaplanmaz ve öğrencinin harf notu FF olarak sonuçlanır. Bir dersten AA, BA, BB, CB, CC ve B notu alan öğrenciler o dersten doğrudan başarılı sayılırlar. Bir dersten FF, FD, K notlarından birisini alan öğrenci, o dersten başarısız sayılır. Başarı baraj notu en az 2.00’dır. Herhangi bir yarıyıl sonunda AGNO’su başarı baraj notunun altında kalan öğrenciler, sınamalı öğrenci sayılırlar. AGNO’su art arda iki yarıyıl başarı baraj notunun altında olan öğrenciler başarısız duruma girer. Herhangi bir dersten DC ve DD notu alan öğrencilerin o dersten başarılı sayılabilmeleri için AGNO’sunun dersin alındığı yarıyıl veya dersin alındığı yarıyılı takip eden yarıyıl sonunda 2.00’dan düşük olmaması gerekir. Bu şartı yerine getiremeyen öğrenci DD ve DC notlarını almış olduğu derslerden başarısız sayılır. Tekrar alınan derslerin başarı notu not durum belgesinde tekrarlandıkları döneme işlenir. Tekrar edilen dersler için de başarı baraj notu 2.00’dır.", "Sınav soruları yapılandırılmış cevap anahtarlarıyla birlikte hazırlanmaktadır. Cevap anahtarlarında hangi sorunun hangi öğrenim çıktısına karşılık geldiği yer almaktadır. Ayrıca cevap anahtarlarında detaylı şekilde puanlandırma da yer almaktadır. Laboratuvar, Uygulama, Alan Çalışma, Kısa Sınavlar (Quiz), Ödevler, Sunum, Projeler, Ara Sınavlar, Dönem Sonu Sınavı gibi tüm başarı ölçme kriterleri her ders için dersin bilgi paketinde yüzdelik dağılımlarıyla birlikte yer almaktadır.", "Müfredat kapsamında yer alan 5i (Atatürk İlkeleri ve İnkılap Tarihi, Türk Dili ve İngilizce) derslerinin ölçme ve değerlendirmeleri ise çoktan seçmeli sınavlarla yapılmaktadır. Öğrencinin yapılan ölçme ve değerlendirmeye herhangi bir itirazı olması durumunda öğrenci ile girdiği sınava ait karne paylaşılmaktadır. Öğrenci karne de açıkça girdiği sınavların doğru cevap anahtarlarını ve kendisi tarafından optik forma yapılan kodlamayı izleyebilmektedir."], "ev": [{"n": 1, "l": 4, "f": "B.2.2-soru_kazanim_eslesme.pdf"}, {"n": 2, "l": 4, "f": "B.2.2-shmyo_opo_odev_rubrikleri.pdf"}, {"n": 3, "l": 3, "f": "B.2.2-shmyo_iay_uygulama_sinavi.pdf"}]}, "B.2.3": {"od": "Öğrenci kabulü, önceki öğrenmenin tanınması ve kredilendirilmesine ilişkin süreçler izlenmekte, iyileştirilmekte ve güncellemeler ilan edilmektedir.", "p": ["Avrasya Üniversitesine kabul edilecek öğrencilerin seçimi ve tercihlerine göre yerleştirilmeleri 2547 sayılı Yükseköğretim Kanununun 45. maddesi uyarınca Ölçme, Seçme ve Yerleştirme Merkezi (ÖSYM) tarafından düzenlenen Yükseköğretim Kurumları Sınavı (YKS) sonucunda alınan puanlar, yapılan tercihler ve önceden belirlenen kontenjanlar dikkate alınarak ÖSYM tarafından yapılır.", "Merkezi yerleştirmeyle gelen öğrenci grupları dışında kalan özel yetenek ve yatay geçiş usulüyle ya da , uluslararası (yabancı uyruklu) öğrenci statüsü ile gelen öğrencilerin kabulüne ilişkin ilke ve kura ların belirlendiği yönerge ve senato kararları bulunmaktadır.", "Özel Yetenek Sınavı gerektiren programlar, Yükseköğretim Kurumları Sınavı (YKS) Yükseköğretim Programları ve Kontenjan Kılavuzu Tablo-5 te yer almakta olup tablo kapsamında yer alan programlarımıza öğrenci alımında yapılan özel yetenek sınavları ve değerlendirme işlemleri Yükseköğretim Kurulunun belirlediği ilke ve kurallar doğrultusunda üniversitemiz tarafından yapılmaktadır [1_OD3]. Bu ilke ve kurallar birbiri ile tutarlı olup, uygulamalar ş effaftır.", "Diploma, sertifika gibi belge talepleri titizlikle takip edilmektedir. Üniversite icinden ya ̧ da baş ka üniversitelerden yatay geciş ̧ lerde, 24/4/2010 tarihli ve 27561 sayılı Resmi Gazete’ de yayımlanan Yü ksekö ğretim Kurumlarında Önlisans ve Lisans Dü zeyindeki Programlar Arasında Geciş ̧ , Cift Anadal, Yan Dal ile Kurumlar Arası ̧ Kredi Transferi Yapılması Esaslarına iliş kin Yö netmelik (OD4) hü kü mleri ile Senato tarafından belirlenen esaslar uygulanır.", "Önceki ö ğ renmenin (ö rgü n, yaygın, uzaktan/karma eğitim ve serbest ö ğ renme yoluyla edinilen bilgi ve becerilerin) tanınması ve kredilendirilmesi Avrasya Üniversitesi Önceden Kazanılmış Yeterliliklerin Tanınması, Kredi Transferi ve İntibak İşlemleri Yönergesine göre yapılmaktadır. Uluslararasılaş ma politikasına (OD4) paralel hareketlilik destekleri, öğrenciyi teş vik, kolaylaş tırıcı önlemler bulunmaktadır ve hareketlilikte kredi kaybı olmaması yö nü nde uygulamalar vardır. Öğrencilerin akademik değişim programları ile yurt içi ve yurt dışı üniversitelerden aldıkları derslerin karşılıkları Avrasya Üniversitesinde kayıtlı oldukları programda yoksa program kazanımları dikkate alınarak intibak işlemleri yapılmaktadır. İntibak işleminde, öğrencinin akademik değişim programında almış olduğu dersler, Bölüm Başkanlığı’nın önerisi üzerine içeriğine bakılmaksızın kendi ders planında yer alan eş değer kazanımlı alan içi ya da alan dışı dersler yerine sayılmaktadır.", "Üniversitemize Dikey Geçiş Sınavları ile öğrenci kabulü yapılmaktadır. Dikey geçişlerde 19/2/2002 tarihli ve 24676 sayılı Resmî Gazete’de yayımlanan Meslek Yüksekokuları ve Açıköğretim Ön Lisans Programları Mezunlarının Lisans Öğrenimine Devamları Hakkında Yönetmelik (OD4) hükümleri uygulanmaktadır. Lisansüstü programlara öğrenci kabulü güz ve bahar döneminde ilgili eğitim öğretim yılının akademik takviminde ilan edilen tarihlerde yapılmaktadır. Avrasya Üniversitesi bünyesinde yer alan fakülte/yüksekokul/meslek yüksekokulu programlarına başvurmak isteyen adaylar, YKS sınavının ilgili puan türünde yeterli puanı elde etmelidir. YKS yerleştirme sonucuna göre Avrasya Üniversitesi fakülte/yüksekokul/ meslek yüksekokulu programını kazanan adaylar eş düzeyde başka bir yükseköğretim programına kayıtlı olmamaları şartıyla programa kesin kayıtlarını yaptırabilmektedirler. Aday öğrenciler kayıt işlemlerini tamamladıktan sonra Avrasya Üniversitesi öğrencisi olur ve", "yürürlükteki mevzuatın sağladığı tüm öğrencilik haklarından yararlanırlar. Öğrenci bilgi sistemi üzerinden öğrenci numaralarını unutmaları halinde “Öğrenci Numara Sorgulama” işlemi de yapabilirler.", "Avrasya Üniversitesi’nde kayıt kabul işlemleri, Öğrenci İşleri Daire Başkanlığı tarafından yürütülmekte olup, kayıt için gerekli belgelere (OD4) , resmi web adresinden ulaşılabilir. yönetmelik ve yönergelere ilişkin bilgilere (OD4) Avrasya Üniversitesi’nin Stratejik amaçları doğrultusunda öğrenci kabulü, önceki öğrenimin tanınması, kredilendirilmesi süreçlerine ait benimsediği uygulamaları mevcuttur. Tüm bu süreçler yürürlükte olan çerçeve yönetmeliklerle uyumlu olarak yapılandırılmış yönetmelik ve yönerge hükümleri çerçevesinde yürütülmektedir. Akademik takvimde ilan edilen tarihte ortak dersler kapsamında yer alan İngilizce I ve İngilizce II dersleri için muafiyet sınavı yapılır. İsteye bağlı olarak muafiyet sınavına katılarak başarı olan öğrenciler başarılı oldukları derslerden muaf olurlar."], "ev": [{"n": 1, "l": 3, "f": "B.2.3-2025_YKS _SPOR _BİLİMLERİ _İÇİN_ÖZEL _YETENEK _SINAVI _(ÖZYES).pdf"}]}, "B.2.4": {"od": "Uygulamalar izlenmekte ve tanımlı süreçler iyileştirilmektedir", "p": ["Avrasya Üniversitesi'nde yeterliliklerin sertifikalandırılması ve diploma işlemleri, “Avrasya Üniversitesi Ön Lisans ve Lisans Eğitim-Öğretim ve Sınav Yönetmeliği” ve “Avrasya Üniversitesi Lisansüstü Eğitim-Öğretim ve Sınav Yönetmeliği” nde tanımlanmıştır. Önlisans veya Lisans düzeyinde; Kayıtlı olduğu bölüm veya programın ders planındaki bütün çalışmalarından başarılı olmuş, lisans düzeyinde 240 AKTS, önlisans düzeyinde ise 120 AKTS kredisini tamamlayarak AGNO’sunu en az 2.00 düzeyine çıkarmış öğrenci öğrenimini bitirmiş sayılır. Bu öğrencilere ilgili yönetmeliğin 43 üncü maddesinde yer alan hükümlerine göre tamamlayan öğrencilere ilgili yönetim kurulu kararı ile diploma ve diploma eki verilir. Avrasya Üniversitesi Türkçe Öğretimi Uygulama ve Araştırma Merkezinde (TÖMER) ise yabancı uyruklu öğrenci ve vatandaşlara Türkçe eğitimi verilmektedir (OD4).(OD4).", "Yeterliliklerin sertifikalandırılması veya belgelenmesi, diploma çeşitleri, onur ve yüksek onur belgeleri, diploma eki gibi belgelerin hazırlanmasında uygulanacak esaslar “Avrasya Üniversitesi Diploma Yönergesi” (OD4) ile Sertifikalandırma ve diploma işlemleri bu tanımlı sürece uygun olarak yürütülmekte, izlenmekte ve gerekli önlemler alınmaktadır. Yeterliliklerin onayı, mezuniyet koş ulları, mezuniyet karar sürecleri aç ık, ̧ anlaş ılır, kapsamlı ve tutarlı ş ekilde ilgili yönetmelik ve yönergelerimizle tanımlanmıs ve kamuoyu ile paylaş ılmış tır.", "Öğrencilerin yerleşip kayıt yaptırdıkları ilgili programdan mezun olabilmeleri için almaları gereken AKTS’ler ilgili mevzuat ile belirlenmiştir. Avrasya Üniversitesi Lisans Önlisans Eğitim Öğretim Yönetmeliği’nin “Madde 42. Kayıtlı olduğu bölüm veya programın ders planındaki bütün çalışmalardan başarılı olmuş, lisans düzeyinde 240", "AKTS, önlisans düzeyinde ise 120 AKTS kredisini tamamlayarak AGNO’sunu en az 2.00 düzeyine çıkarmış öğrenci öğrenimini bitirmiş sayılır. Bu öğrencilere 43 üncü madde hükümlerine göre diploma verilir.” Hükmü gereğince mezun olma hakkını elde ederler.", "Öğrencilerin mezuniyetleri için gerek duydukları kredi koşulları, bağlı oldukları müfredat gereği almaları gereken zorunlu ve seçmeli ders bilgileri, Öğrenci Bilgi Sistemi aracılığıyla sağlanmaktadır (OD3). Ders dönemlerinin başlangıcında ilgili dönemde açılan tüm derslerin (zorunlu ve seçmeli) listesi ve haftalık ders programı birimlerin web sayfasından yayımlanmaktadır (OD3). Öğrenciler Öğrenci Bilgi Sistemi üzerinden ders seçimlerini tamamladıktan sonra akademik danışmanlarının onayına göndermektedirler. Öğrencilerin sınıf düzeyleri ve akademik ortalamaları itibariyle almaları gereken dersler/krediler akademik danışmanlar tarafından kontrol edilerek öğrencinin kaydı onaylanmaktadır. Öğrenci bilgi sistemine öğrencilerin kazandıkları yıl itibariyle bağlı oldukları müfredatları yüklenmekte ve eğitim öğretim süreci boyunca öğrencilerin mezun olabilmeleri için gerekli koşulları ne oranda sağladıklarını göstermektedir. Mezuniyet süreçlerine ait iş ve işlemler akademik danışmanlar ve Öğrenci İşleri Daire Başkanlığı koordinasyonunda yürütülmektedir. Akademik danışmanlar ve Öğrenci İşleri Daire Başkanlığı tarafında Öğrenci Bilgi Sistemin’de öğrencinin gerekli olan mezuniyet şartlarının sağlayıp sağlamadığı kontrol edilmektedir. Mezuniyet öncesinde Öğrenci Bilgi Sistemi’nde oluşan transkript esas alınmaktadır. Mezuniyet işlemleri sağlanan kontrollerinin ardından akademik danışmanın “Mezun Olur” onayı ile başlatılır [1_OD4]. Gerçekleştirilen İyileştirmeler: Fen edebiyat Fakültesi Psikoloji Programı ve Türk Dili ve Edebiyatı Programı öğrencileri 2024-2025 Eğitim Öğretim yılı itibariye mezun olmaya hak kazandıklarında, akredite bir programdan mezun olacaklar (OD4)."], "ev": [{"n": 1, "l": 4, "f": "B.2.4-OBS_Mezuniyet_Onayi_Ekrani.pdf"}]}, "B.3.1": {"od": "Öğrenme kaynaklarının geliştirilmesine ve kullanımına yönelik izleme ve iyileştirilme yapılmaktadır.", "p": ["2024 KIDR de kurumun fiziki kaynaklarına yer verilmiştir. Kurum, eğitim-öğretim faaliyetlerini nitelikli biçimde sürdürebilmek ve öğrencilere fırsat eşitliğine dayalı öğrenme olanakları sunabilmek amacıyla eş zamanlı ve eş zamansız öğrenmeyi destekleyen Öğrenme Yönetim Sistemini (LMS) tüm akademik birimlerin kullanımına sunmuştur (OD3). Zenginleştirilmiş içerik sağlayan bu dijital öğrenme ortamının yeterliliği ve öğrenciler tarafından kullanım durumu, entegre analitik araçlar (Kullanıcı Etkileşim İzleme Mekanizmaları) üzerinden periyodik olarak izlenmektedir [2_OD4]. [6_OD4].", "2025 yılı LMS çeyrek dönem kullanıcı etkileşim verileri analiz edildiğinde; sistemin eğitim-öğretim dönemlerinde son derece aktif kullanıldığı saptanmıştır. Özellikle birinci çeyrekte (Ocak-Mart) 6.667 etkin kullanıcının sisteme erişim sağladığı, kullanıcı başına ortalama etkileşim süresinin 4 dakika 23 saniye gibi yüksek bir düzeyde gerçekleştiği", "ve 99.898 sayfa görüntülemesi yapıldığı belgelenmiştir [3_OD4]. Yılın son çeyreğinde (Ekim-Aralık) ise etkin kullanıcı sayısının 8.216'ya yükseldiği görülmektedir [4_OD4].", "Öğrenci eğilimlerini yansıtan sayfa görüntüleme detayları incelendiğinde; öğrencilerin uzaktan yürütülen ortak zorunlu derslere (Örn: Atatürk İlkeleri ve İnkılap Tarihi I, İngilizce I, Türk Dili I) ve mesleki sertifika/eğitim alanlarına (Örn: İş Sağlığı ve Güvenliği Sertifika Eğitimi, Sağlıkta Meslek Etiği) LMS üzerinden yoğun erişim sağladığı tespit edilmiştir (OD3) ( bakınız Her çeyrek verisinde yer alan ders başlıkları). Aynı zamanda sistemdeki \"Yeni İçerik\", \"Ders Notu\" ve \"Yüklemeler\" ekranlarındaki trafik yoğunluğu, eğitim materyallerinin kurumun genelinde aktif olarak paylaşıldığını ve öğrenci-materyal etkileşiminin kesintisiz sağlandığını göstermektedir.", "Kurum, elde edilen bu dijital izleme verilerini yalnızca bir istatistik olarak kayıt altında tutmamakta, PUKÖ döngüsünün \"Önlem Alma\" aşamasında aktif olarak kullanmaktadır. Yaz dönemine (Temmuz-Eylül) denk gelen üçüncü çeyrekte etkin kullanıcı sayısının 2.495'e, ortalama etkileşim süresinin ise 39 saniyeye düşmesi ve çeyrekler arası etkileşim süresi farklılıkları (Örn: Birinci çeyrek 4 dk. 23 sn. iken ikinci çeyrekte 45 sn.) akademik birimlerle paylaşılarak değerlendirilmektedir [2_OD4]. Bu analitik veriler ışığında ders materyallerinin zenginleştirilmesi, dijital içeriklerin öğrenciyi daha fazla sistemde tutacak niteliğe kavuşturulması ve öğrenme ortamlarının sürekli güncellenmesi yönünde karar alma mekanizmaları işletilmektedir", "Kurumumuzda öğrenme ortamları ve fiziksel kaynakların yönetimi, paydaş geri bildirimlerine dayalı sistematik bir izleme ve iyileştirme mekanizmasıyla yürütülmektedir. Bu kapsamda, mevcut altyapıların eğitim-öğretim çıktılarını destekleme düzeyi düzenli olarak değerlendirilmektedir Bu sürecin somut bir örneği olarak; Sağlık Bilimleri Fakültesi Odyoloji Bölümü laboratuvar altyapısına yönelik iç ve dış paydaşlardan gelen geri bildirimler analiz edilmiştir. Yapılan analizler neticesinde tespit edilen teknik donanım eksiklikleri ve fiziksel iyileştirme ihtiyaçları, üst yönetime sunulmuştur Söz konusu rapor doğrultusunda gerekli kaynak planlaması yapılmış ve eğitim ortamının niteliğini artıracak teknik güncellemeler hayata geçirilmiştir [1_OD4]."], "ev": [{"n": 1, "l": 4, "f": "B.3.1-B.3.1_SBF_Odyoloji_Lab_Iyilestirme_Raporu.pdf"}, {"n": 2, "l": 4, "f": "B.3.1-LMS_Kullanici_Etkilesim_ve_Sayfa_Goruntuleme_Analiz_Raporu_2025.pdf"}, {"n": 3, "l": 4, "f": "B.3.1-2025_Yili_1_Ceyrek_Etkin_Kullanici_ve_Etkilesim_Suresi_Verileri.pdf"}, {"n": 4, "l": 4, "f": "B.3.1-2025_Yili_4_Ceyrek_Etkin_Kullanici_ve_Sayfa_Trafigi_Verileri.pdf"}, {"n": 5, "l": 4, "f": "B.3.1-Kurum_Clarity_Avrasya_Performansa genel bakış_LMS_LCP.pdf"}]}, "B.3.2": {"od": "Kurumda öğrencilerin akademik gelişimi ve kariyer planlamasına ilişkin uygulamalar izlenmekte ve öğrencilerin katılımıyla iyileştirilmektedir.", "p": ["Kurumda öğrencilerin akademik gelişimlerini izleyen, onlara yön gösteren ve kariyer planlamalarına destek olan akademik danışmanlık sistemi öğrenci merkezli bir yaklaşımla yönetilmektedir. 2024 yılı KİDR raporunda da belirtildiği üzere; öğrencilere ilgili mevzuat hükümleri kapsamında akademik danışmanlar atanmakta, ders seçimleri ve kariyer hedefleri danışmanları ile birlikte sistematik olarak planlanmaktadır. 2025 yılı itibarıyla, akademik danışmanlık sistemini sadece ders seçimiyle sınırlı tutmayan Kurum, öğrencilerin psikolojik, sosyal ve mesleki gelişimlerini desteklemek üzere hizmet ağını genişletmiştir.", "Kurum bünyesinde Kariyer Geliştirme ve Planlama Uygulama ve Araştırma Merkezi koordinasyonunda yürütülen kariyer süreçlerinde; Cumhurbaşkanlığı İnsan Kaynakları Ofisi (CBİKO) Yetenek Kapısı platformunda yer alan işveren veri tabanı, öğrencilerin kariyer gelişimi, staj planlaması ve mezun istihdam süreçlerinin etkin yönetimi amacıyla sistematik olarak analiz edilmektedir [2_OD4].", "Sistematik olarak analiz edilen bu dijital etkileşim platformu üzerinde izleme yılı itibarıyla; 6.042 kayıtlı öğrenci/mezun ile 1.516 işverenin iletişim bilgisi bulunmakta olup, 3.480 iş/staj ilanı (38'i aktif) ve 1.450 kariyer etkinlik ilanı öğrencilerin erişimine sunulmuştur (OD4).", "Yapılan veri analitiği çalışmaları sonucunda; 1.516 işverenden oluşan kurumsal iletişim ağının sektörel olarak özellikle bilişim teknolojileri (128 firma), turizm ve konaklama (63 firma), eğitim (57 firma), tekstil (48 firma) ve lojistik (34 firma) alanlarında yoğunlaştığı; bölgesel olarak ise işverenlerin %50'den fazlasının İstanbul (415), Ankara (183) ve İzmir (90) gibi büyük metropollerde konumlandığı tespit edilmiştir. Kurumun bölgesel kalkınma misyonu açısından kritik öneme sahip olan Trabzon bağlantılı işveren sayısının ise 60 olduğu nesnel olarak raporlanmıştır [3_OD3].", "Elde edilen bu analitik bulgular doğrultusunda; program–sektör uyumunun güçlendirilmesine, dijital ve hizmet sektörlerinin baskın olduğu mevcut ağ dikkate alınarak kariyer hizmetlerinin (sektör buluşmaları, staj yönlendirmeleri vb.) sektörel odaklı yeniden yapılandırılmasına ve özellikle yerel/bölgesel iş birliklerinin artırılmasına yönelik kurumsal iyileştirme faaliyetleri yürütülmektedir.", "Bununla birlikte, Kurumun tavizsiz şekilde uyguladığı veri güvenliği politikaları, 6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) yükümlülükleri ve kurumsal gizlilik ilkeleri uyarınca platformda yer alan işveren iletişim detaylarını içeren ham veri seti kamuya açık olarak paylaşılmamaktadır. Ancak veri setinden elde edilen özet bulgular ve demografik/sektörel analiz sonuçları; kurumsal kalite güvencesi raporlamalarında kullanılmakta, stratejik karar alma mekanizmalarına veri temelli girdi sağlamakta ve şeffaflık ilkesi gereği uygun istatistiksel düzeyde kamuoyu ile paylaşılmaktadır."], "ev": [{"n": 1, "l": 4, "f": "B.3.2-shmyo_akran_soylesisi.pdf"}, {"n": 2, "l": 4, "f": "B.3.2-Yetenek_Kapisi_Ogrenci_ve_Isveren_Istatistikleri.docx"}, {"n": 3, "l": 3, "f": "B.3.2-Akademik_destek_hizmetleri_ic_analiz_raporu.pdf"}]}, "B.3.3": {"od": "Tesis ve altyapının kullanımı izlenmekte ve ihtiyaçlar doğrultusunda iyileştirilmektedir.", "p": ["Avrasya Üniversitesi'nde eğitim-öğretim, araştırma ve barınma faaliyetlerini destekleyecek fiziksel alanlar ile bilişim altyapısı, öğrenci merkezli bir yaklaşımla tasarlanarak güvence altına alınmıştır. Kurumun kendi mülkiyetindeki beş yerleşkede toplam 155.785 m² alan (52.186 m² kapalı, 103.599 m² nitelikli açık alan) bulunmaktadır. Bu kapsamda; 139 derslik, 40 laboratuvar, 4 atölye ile eğitim (12.892 m²), araştırma (3.201 m²), kütüphane (3.520 m²), spor (4.437 m²) ve sosyal etkinlik (3.370 m²) alanları fırsat eşitliği temelinde tüm öğrencilerin ücretsiz erişimine sunulmuştur. Kurumun mevcut fiziksel kapasitesi, Yükseköğretim Kurulunun belirlediği öğrenci başına 12 m² (TZÖB) standardını fazlasıyla karşılamaktadır.", "Eğitim-öğretim süreçlerinin dijitalleşmesi ve erişilebilirliği kapsamında; Kuruma kayıtlı tüm öğrencilere avrasya.edu.tr uzantılı kurumsal e-posta hesapları tanımlanmış ve ücretsiz Microsoft lisans abonelikleri sağlanarak öğrencilerin teknolojik olanakları genişletilmiştir. Tesis ve bilişim altyapılarının amaca uygunluğu ile kullanım verimliliği, Kurum tarafından uygulanan Öğrenci Memnuniyet Analizi ve İyileştirme Stratejileri Raporu üzerinden düzenli olarak izlenmektedir (PUKÖ - Kontrol Etme). Yapılan analiz sonuçlarına göre; öğrencilerin Fiziki Altyapı/Güvenlik ve Dijital Hizmetler boyutlarındaki memnuniyet oranlarının son derece yüksek seviyede seyrettiği nesnel olarak tespit edilmiştir.", "Elde edilen veriler, paydaş geri bildirimleri ve çağın gereksinimleri doğrultusunda, tesis ve altyapının sürekli olarak güncel tutulması amacıyla iyileştirme adımları atılmaktadır. Örneğin; tüm yerleşkelerdeki dersliklerde standart eğitim donanımları eksiksiz olarak bulunmakla birlikte, dış paydaşlardan gelen disiplinlerarası eğitim talepleri dikkate alınarak Bilimsel Araştırma Projeleri (BAP) destekleri kapsamında Kurum bünyesinde yeni bir STEM Laboratuvarı kurulmuş ve araştırma-geliştirme altyapısı çok yönlü uygulama imkânlarıyla güçlendirilmiştir. Ayrıca yerleşkelerdeki açık ve kapalı alanlar; açık hava konserleri, sergiler ve kongreler gibi geniş katılımlı organizasyonlara ev sahipliği yapacak şekilde çok amaçlı hale getirilmiştir."], "ev": []}, "B.3.4": {"od": "Dezavantajlı grupların eğitim olanaklarına erişimine yönelik uygulamalar izlenmekte ve dezavantajlı grupların görüşleri de alınarak iyileştirilmektedir.", "p": ["Üniversitemiz bünyesinde dezavantajlı gruplara yönelik faaliyet gösteren birimler aşağıda listelenmiştir.", "- Engeli Öğrenci Birimi,", "- Göç Sorunları Uygulama ve Araştırma Merkezi, Türkçe Öğretim Merkezi,", "- Kadın Çalışmaları Uygulama ve Araştırma Merkezi, Bağımlılıkla Mücadele Uygulama ve Araştırma Merkezi, Psikolojik Danışmanlık ve Rehberlik Birimi", "Avrasya Üniversitesi Engelli Birimi; Yükseköğretim Kurumları Engeliler Danışma ve Koordinasyon Yönetmeliği’nin 11 inci maddesinin birinci fıkrası uyarınca oluşturularak faaliyetlerine başlamıştır. Avrasya Üniversitesi Engeli Birimi; engelli yükseköğrenim öğrencilerinin akademik, idari, fiziksel, psikolojik, barınma ve sosyal alanlarla ilgili ihtiyaçlarını tespit etmek ve bu ihtiyaçların karşılanması için yapılması gerekenleri belirleyip, yapılacak çalışmaları planlamak, uygulamak, geliştirmek ve yapılan çalışmaların sonuçlarını değerlendirmek misyonu çerçevesinde; engel ve engelli bireyler ile ilgili farkındalık ve bilinç düzeyinin arttırılmasını hedeflemektedir. Avrasya Üniversitesi Engelli Birimi Esaslarının Eğitim-Öğretim Uygulamaları başlıklı üçüncü kısmında ders uygulamaları, sınav uygulamaları, ders muafiyeti ve intibak, akademik destek hususlarında kurum, birim, danışmanlar ve öğretim elemanlarının görev yetki ve sorumlulukları belirlenmiş ve paylaşılmıştır. Bu bağlamda; Üniversitemize yerleşen engelli öğrencilerin ilk tespiti kayıt esnasında başlayan bir süreç içerisinde yürütülmekte ve ilgili öğrenciler Engelli Birimi üzerinden bağlı olduğu akademik birim danışmanına yönlendirilmektedir. İlgili danışman, engelli öğrencilerimizin durumunu ve ihtiyaçlarını belirlemek adına Engelli Öğrenci Tespit Formu ile gerekli bilgileri edinmekte ve form ile edinilen bilgiler kapsamında öğrenci ile yapılan görüşme sonuçları Engelli Öğrenci Danışma ve Koordinasyon Birimi Yönergesi çerçevesinde Engelli Öğrenci Birimine iletilmektedir. Üniversite bünyesinde kayıtlı bulunan engelli öğrencilerin karşılaştıkları dezavantajları ortadan kaldırmak ve onların Üniversitede akademik, sosyal ve kültürel ortamlara eşit fırsatlarla katılımlarını sağlamaya yönelik yerleşkelerde uygun fiziki koşulların sağlanması için tasarım çalışmaları devam etmektedir. Ömer YILDIZ Yerleşkesinde 2020-2021 döneminde inşaatı devam eden ve 2021-2022 döneminde inşaatı tamamlanan Eczacılık ve Diş Hekimliği Fakültelerine ait binada; engelli rampaları, tutunma trabzanları, engelli asansörleri, engelli tuvaletleri vb. yapımı tamamlanmıştır. 2024-2025 Eğitim Öğretim yılında Yomra Yerleşkesi, Pelitli Yerleşkesi ve Ömer Yıldız Yerleşkelerinde engelli tuvaletlerine panik butonları ve eğimli aynalar takılmış, aynı zamanda görme engelliler için izli yollar ve yönlendirme tabelaları düzenlenmiştir. Eğitim-Öğretim döneminde de üniversitemizi kazanan farklı dezavantaja sahip öğrencilerin eğitimlerini sürdürebilmelerini kolaylaştırıcı önlemler alınmıştır. Birim Üniversitemiz İş Sağlığı ve Güvenliği Kurulu ile koordineli çalışmakta ve alınan kurul kararları uyarınca gerçekleştirilecek fiziki düzenlemeler için öğrenci ihtiyaçları ile ilgili bilgi sunarak önerilerde bulunmaktadır. Dezavantajlı gruplara yönelik üniversitemiz tarafından gerçekleştirilen çalışmalara ilgili birim Web sitesinde yer almaktadır (ODR4) . Ayrıca Psikolojik Danışmanlık ve Rehberlik Birimi tarafından psikolojik destek hizmetleri ücretsiz sunulmaktadır (ODR4) . Üniversitemiz bünyesinde dezavantajlı gruplara yönelik düzenlenen faaliyetlere;", "Göç ve Mültecilikte Kırılgan Gruplar: Kadın ve Çocuk Perspektifleri Konferansı (ODR4)", "Görme/Fiziksel sağlık sorunu olan öğrencinin talebiyle sınavların okuyucu eşliğinde ve 20 punto yapılması kararıyla kapsayıcı iyileştirme yapılmıştır [1_OD4].[2_OD4]."], "ev": [{"n": 1, "l": 4, "f": "B.3.4-shmyo_engelli_sinav_destek.pdf"}, {"n": 2, "l": 4, "f": "B.3.4-shmyo_engelli_ders_destek.pdf"}]}, "B.3.5": {"od": "Sosyal, kültürel ve sportif faaliyet mekanizmaları izlenmekte, ihtiyaçlar/talepler doğrultusunda faaliyetler çeşitlendirilmekte ve iyileştirilmektedir.", "p": ["Kurumumuzda öğrencilerin akademik eğitimlerinin yanı sıra sosyal, kültürel ve sportif gelişimlerini bütünleşik olarak desteklemek amacıyla Sağlık, Kültür ve Spor Daire Başkanlığı (SKS) koordinasyonunda sistematik bir yapı işletilmektedir. Bu faaliyetler, Kurumun 2026-2030 Stratejik Planı'nda yer alan \"Hedef 1.3: Öğrenci Başarısı, Sosyal Gelişim ve Memnuniyet Düzeyi Artırılacaktır\" vizyonu ve (PG 1.3.1) öğrenci odaklı etkinlik sayısı performans göstergesi ile doğrudan uyumlu olarak planlanmaktadır (OD3).", "Öğrenci kulüplerinin faaliyetleri, yönetime doğrudan katılmayan ancak rehberlik/mentörlük faaliyeti yürüten atanmış Akademik Kulüp Danışmanları eşliğinde sürdürülmektedir. Fırsat eşitliği ve erişilebilirlik ilkeleri gözetilerek, öğrenci topluluklarının etkinlikleri için üniversitenin amfileri, konferans salonları ve spor alanları fiziksel kaynak olarak tahsis edilmektedir. Kurum genelinde her öğrencinin ilgisine hitap edecek çeşitlilikte ve kapsayıcılıkta faaliyetler uygulanmaktadır. Sosyal, kültürel ve sportif faaliyetlerin etkililiği ve ulaştığı kapasite, Kurum tarafından eğitimöğretim yılları bazında karşılaştırmalı olarak analiz edilmektedir. Yapılan kurumsal izleme analizlerine göre; 2023-2024 eğitim-öğretim yılında öğrenci kulüplerince düzenlenen toplam etkinlik sayısı 89 iken, 2024-2025 döneminde %29,21'lik bir artışla 115'e yükselmiştir. Benzer şekilde bu faaliyetlere katılım gösteren öğrenci sayısı da 11.327'den %30,71'lik belirgin bir artışla 14.806'ya ulaşmıştır.", "Elde edilen bu performans verileri, SKS Daire Başkanlığı ve ilgili komisyonlarca izlenmekte; öğrencilerin sosyal ve kültürel faaliyetlere katılım motivasyonlarının arttığı teyit edilerek, süreç ihtiyaçlar ve talepler doğrultusunda sürekli olarak iyileştirilip çeşitlendirilmektedir.", "Eğitim-öğretim faaliyetleri, akademik etkinlikler ve öğrenci odaklı uygulamalara ilişkin basın yansımaları, öğrenme süreçlerinin toplumsal karşılığı ve görünürlüğü bağlamında değerlendirilmekte ve kalite güvencesi süreçlerine veri sağlamaktadır [1_OD4]", "18 Mart Çanakkale Zaferi ve Şehitleri Anma Günü Programı (Ömer Yıldız Yerleşkesi) (ODR4).", "8 Mart Dünya Kadınlar Günü Etkinliği (ODR4).", "27 Mayıs Türk Mutfağı Haftası Etkinliği (ODR4). Cumhuriyetin Anlam ve Önemi Etkinliği (ODR4). Gastronomi ve Mutfak Sanatları Farkındalık Etkinliği (ODR4).", "Dış Paydaşımız Sınav Koleji Öğrencileri 23 Nisan Ulusal Egemenlik ve Çocuk Bayramı Etkinliği (ODR4).", "Avrasya Üniversitesi Öğrencileriyle İftar Programı (ODR4)."], "ev": [{"n": 1, "l": 4, "f": "B.3.5-Egitim-Ogretim_Basın_Rapor.pdf"}, {"n": 2, "l": 4, "f": "B.3.5-Egitim_Ogretim_Sosyal_Medya.pdf"}]}, "B.4.1": {"od": "", "p": ["Öğretim elemanı atama, yükseltme ve görevlendirme süreç ve kriterleri Avrasya Üniversitesi Atama Yükseltme Yönergesi ile belirlenmiş ve üniversite resmi web sitesinde yayınlanarak tüm paydaşlarımıza ve kamuoyuna ilan edilmiştir. Üniversitemiz bünyesinde yürütülen ders görevlendirme işlemleri bağlamında eğitimöğretim kadrosunun yetkinlikleri (çalışma alanı/akademik uzmanlık alanı vb.) ile ders içeriklerinin örtüşmesi akademik birimlerin ilgili kuru larınca güvence altına alınmaktadır. Akademisyen kadrosunun eğitim-öğretim performansını izlemek üzere her yarıyıl sonunda öğretim elemanı/ders değerlendirme anketi uygulaması gerçekleştirilmektedir. Bu uygulama ile öğretim elemanları öğrenci geri bildirimleri doğrultusunda ders performanslarını değerlendirme ve ders içeriklerini gözden geçirme şansına sahip olmaktadırlar (ODR4)"], "ev": []}, "B.4.2": {"od": "Öğretim yetkinliğini geliştirme uygulamalarından elde edilen bulgular izlenmekte ve izlem sonuçları öğretim elamanları ile birlikte irdelenerek önlemler alınmaktadır.", "p": ["Avrasya Üniversitesi bünyesindeki akademik personelin öğretim yetkinlikleri ve eğitsel performansları, kurumsal akademik performans değerlendirme süreçleri kapsamında sistematik olarak ele alınmaktadır. Bu değerlendirme çerçevesinde, Öğretim Elemanı ve Ders Değerlendirme Anketleri gibi araçlar vasıtasıyla, öğretim elemanlarının pedagojik performanslarına ilişkin düzenli ve yapılandırılmış geri bildirimler temin edilmekte ve bu veriler performansın izlenmesi ile geliştirilmesinde kulanılmaktadır (ODR4). Akademik personelimizin öğretim yetkinliklerinin geliştirilmesi için kurum içinde sistematik eğitimler düzenlenmektedir. Etkili Sunum Teknikleri Eğitimi (ODR4), ÜNİDOKAF Eğiticileri Eğitimi Programı bu eğitimlere örnek gösterilebilir. Aynı zamanda üniversitemizde görev yapan olan tüm öğretim elemanlarının Eğiticinin Eğitimi Programını tamamlaması zorunluluktur (ODR4). Üniversitemizde yürütülen süreçler kapsamında yapılan yenilikler sonrası oryantasyon eğitimleri verilmektedir. Tüm akademik personelimize Proliz firması tarafından \"Sınav Kazanımı Akreditasyon Uyum ve Raporlama İşlemleri Modülü\" ve \"Akademisyen Soru Bazlı Not Girişi Anket Modülü\" tanıtımı ve kulanımına ilişkin bilgilendirme eğitimi bu eğitimlere örnek gösterilebilir"], "ev": []}, "B.4.3": {"od": "Teşvik ve ödül uygulamaları izlenmekte ve iyileştirilmektedir.", "p": ["Teşvik ve ödülendirme uygulamaları kurum geneline yayılmıştır. Öğretim elemanlarının araştırma projeleri ve akademik çalışmaları BAP kapsamında üniversite", "öz kaynaklarıyla desteklenmektedir. 2024-2025 eğitim öğretim yılında araştırmageliştirme projelerine verilen toplam destek miktarında artış sağlanmıştır. Ayrıca öğretim elemanlarımızın edindiği başarılar, kurum resmi iletişim kanallarından ilan edilerek diğer öğretim elemanları için bir farkındalık oluşturulmaktadır (ODR4)."], "ev": []}};
+function lvlOf(item,text){if(!text)return 0;const tk=s=>new Set(s.toLowerCase().replace(/[^\p{L}\s]/gu,' ').split(/\s+/).filter(w=>w.length>3));const a=tk(text);let best=0,bi=0;item.levels.forEach((lv,i)=>{const b=tk(lv);let n=0;a.forEach(w=>b.has(w)&&n++);const sc=n/Math.max(1,new Set([...a,...b]).size);if(sc>best){best=sc;bi=i+1}});return bi}
+function badge(t){return escapeHtml(t).replace(/[\[(]\s*(\d*)\s*_?\s*ODR?(\d)\s*[\])]/g,(m,n,d)=>`<span class="od d${d}">${n?'['+n+'] ':''}OD${d}</span>`)}
+const items=()=>rubricData.flatMap(s=>s.items);
+function enhance(){
+  const tb=document.createElement('div');tb.className='toolbar';
+  tb.innerHTML=`<div class="prog"><div class="prog-bar"><div class="prog-fill" id="pf"></div></div><small id="pt"></small></div>
+  <button class="tb-btn" onclick="toggleAll(true)">Tümünü Aç</button><button class="tb-btn" onclick="toggleAll(false)">Tümünü Kapat</button>
+  <button class="tb-btn" id="bk" onclick="document.querySelectorAll('.kidr').forEach(d=>d.open=!d.open)">Kurum Beyanlarını Aç/Kapat</button>
+  <button class="tb-btn" id="bd" onclick="document.getElementById('main-content').classList.toggle('hide-done');this.classList.toggle('on')">Yalnızca Puanlanmamışlar</button>`;
+  document.querySelector('.nav-panel').after(tb);
+  items().forEach(it=>{const c=it.id.replace(/\./g,'-'),d=kidrData[it.id],box=document.getElementById('val-'+c).closest('.sub-item');
+    it.claim=d?lvlOf(it,d.od):0;
+    const ttl=box.querySelector('.sub-title');ttl.innerHTML+=` ${it.claim?`<span class="claim">Kurum beyanı: S${it.claim}</span>`:''}<span class="chip" id="chip-${c}" style="display:none"></span>`;
+    if(!d)return;
+    const ev=d.ev.length?`<ul class="ev-list">${d.ev.map(f=>`<li><span class="od d${f.l}">[${f.n}] OD${f.l}</span> ${escapeHtml(f.f)}</li>`).join('')}</ul>`:'<div class="ev-none">⚠ Kurum bu ölçüt için kanıt dosyası listelememiştir.</div>';
+    const p=document.createElement('details');p.className='kidr';
+    p.innerHTML=`<summary>Kurumun KİDR Beyanı ve Kanıtları (${d.ev.length} kanıt)</summary><div class="kidr-in">${d.od?`<div class="kidr-od">Kurumun bildirdiği olgunluk düzeyi: ${escapeHtml(d.od)}</div>`:''}${d.p.map(x=>`<p>${badge(x)}</p>`).join('')}<b>Kanıtlar</b>${ev}</div>`;
+    box.querySelector('.interactive-panel').before(p)});
+  const sl=document.getElementById('summary-list');sl.insertAdjacentHTML('afterend','<div class="sb-cmp" id="cmp"></div>');
+  const dr=document.createElement('div');dr.className='draft';dr.id='draft';document.querySelector('.toolbar').after(dr);
+  document.addEventListener('input',saveDraft);document.addEventListener('change',saveDraft);showDraft();updateMeta()}
+function toggleAll(o){document.querySelectorAll('.sub-item').forEach(e=>e.classList.toggle('collapsed',!o));document.querySelectorAll('.section-card').forEach(e=>e.classList.remove('collapsed'))}
+function updateMeta(){let n=0,cs=0,cc=0,ss=0;
+  items().forEach(it=>{const c=it.id.replace(/\./g,'-'),v=parseInt(document.getElementById('val-'+c)?.value)||0,box=document.getElementById('val-'+c)?.closest('.sub-item'),ch=document.getElementById('chip-'+c);
+    box&&box.classList.toggle('done',v>0);if(v>0){n++;ss+=v}
+    if(ch){if(v&&it.claim){const df=v-it.claim;ch.style.display='';ch.className='chip '+(df>0?'up':df<0?'down':'eq');ch.textContent=`Siz: S${v} ${df>0?'▲ +'+df:df<0?'▼ '+df:'= beyanla uyumlu'}`;cs+=it.claim;cc++}else ch.style.display='none'}});
+  const t=items().length;document.getElementById('pf').style.width=(n/t*100)+'%';document.getElementById('pt').textContent=`${n} / ${t} ölçüt puanlandı`;
+  document.getElementById('cmp').innerHTML=cc?`Kurum beyanı ort.: <b>${(cs/cc).toFixed(2)}</b> · Değerlendirme ort.: <b>${(ss/n).toFixed(2)}</b> <br>Beyandan sapan ölçüt: <b>${document.querySelectorAll('.chip.up,.chip.down').length}</b>`:'Puanladıkça kurum beyanıyla karşılaştırma burada görünür.'}
+const _ct=calculateTotal;calculateTotal=function(){_ct();if(document.getElementById('pf'))updateMeta()};
+const DK='kidr_draft_v1';let dt;
+function saveDraft(){clearTimeout(dt);dt=setTimeout(()=>{try{const d={t:Date.now(),no:document.getElementById('proj-no').value,nm:document.getElementById('proj-name').value,s:{},k:{},c:{},o:['summary','strengths','weaknesses'].map(x=>document.getElementById('overall-'+x).innerHTML)};
+  items().forEach(it=>{const c=it.id.replace(/\./g,'-');d.s[c]=document.getElementById('val-'+c).value;d.c[c]=document.getElementById('comment-'+c).innerHTML;d.k[c]=it.checks.map((_,i)=>(document.querySelector(`input[name="L-${c}-${i}"]:checked`)||{}).value||0)});
+  if(Object.values(d.s).some(v=>v!=='0'))localStorage.setItem(DK,JSON.stringify(d))}catch(e){}},900)}
+function showDraft(){try{const d=JSON.parse(localStorage.getItem(DK)||'null');if(!d)return;const el=document.getElementById('draft');el.style.display='flex';
+  el.innerHTML=`💾 Kaydedilmemiş taslak bulundu (${new Date(d.t).toLocaleString('tr-TR')}). <button class="tb-btn" onclick="restoreDraft()">Geri Yükle</button><button class="tb-btn" onclick="localStorage.removeItem(DK);this.parentElement.style.display='none'">Sil</button>`}catch(e){}}
+function restoreDraft(){const d=JSON.parse(localStorage.getItem(DK));document.getElementById('proj-no').value=d.no||'';document.getElementById('proj-name').value=d.nm||'';
+  items().forEach(it=>{const c=it.id.replace(/\./g,'-');document.getElementById('comment-'+c).innerHTML=d.c[c]||'';(d.k[c]||[]).forEach((v,i)=>{if(+v){const r=document.getElementById(`L-${c}-${i}-${v}`);if(r)r.checked=true}});calculateSuggestion(c);if(+d.s[c])selectScore(c,+d.s[c])});
+  ['summary','strengths','weaknesses'].forEach((x,i)=>document.getElementById('overall-'+x).innerHTML=d.o[i]||'');document.getElementById('draft').style.display='none'}
+window.onload=function(){init();enhance()};
+
+</script>
+</body>
+</html>
