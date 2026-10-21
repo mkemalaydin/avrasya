@@ -95,6 +95,8 @@
         .suggestion-box.active { border-color: var(--accent); box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1); }
         .sugg-label { font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
         .sugg-value { font-size: 2.5rem; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 10px; transition: 0.3s; }
+        .sugg-claim { font-size: 0.8rem; color: #475569; margin: 0 0 10px; }
+        .sugg-claim b { color: var(--primary); }
         .btn-apply-sugg { background: var(--accent); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; cursor: pointer; opacity: 0.5; pointer-events: none; transition: 0.2s; }
         .suggestion-box.active .btn-apply-sugg { opacity: 1; pointer-events: auto; }
         .suggestion-box.active .btn-apply-sugg:hover { background: #0369a1; transform: translateY(-1px); }
@@ -104,10 +106,10 @@
         .btn-score { flex: 1; height: 45px; border-radius: 8px; border: 1px solid var(--border); background: #ffffff; font-weight: 800; cursor: pointer; transition: all 0.2s; font-size: 1.1rem; color: #475569; }
         .btn-score:hover { border-color: var(--accent); color: var(--accent); background: #f0f9ff; }
         .btn-score.active { color: white; border-color: transparent; }
-        .btn-score.active.lv5 { background: var(--success); }
+        .btn-score.active.lv5 { background: #16a34a; }
         .btn-score.active.lv4 { background: #84cc16; }
-        .btn-score.active.lv3 { background: var(--accent); }
-        .btn-score.active.lv2 { background: var(--warning); }
+        .btn-score.active.lv3 { background: #eab308; color: #422006; }
+        .btn-score.active.lv2 { background: #f97316; }
         .btn-score.active.lv1 { background: var(--danger); }
 
         .rubric-table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 20px; font-size: 0.8rem; background: white; table-layout: fixed; }
@@ -115,8 +117,13 @@
         .rubric-table th { background: #f1f5f9; color: #0f172a; font-weight: 700; text-align: center; }
         .rubric-table td { color: #475569; }
         .rubric-table td b { display: block; margin-bottom: 6px; font-size: 0.9rem; color: var(--primary); text-align: center; background: #f8fafc; padding: 4px; border-radius: 4px; border: 1px solid #e2e8f0; }
-        .rubric-table td.selected-level { background-color: #f0fdf4; border-color: #bbf7d0; color: #166534; box-shadow: inset 0 0 0 2px #22c55e; }
-        .rubric-table td.selected-level b { background-color: #dcfce7; color: #166534; border-color: #86efac; }
+        .rubric-table td.selected-level { background-color: var(--level-light); border-color: var(--level-color); color: var(--level-text); box-shadow: inset 0 0 0 2px var(--level-color); }
+        .rubric-table td.selected-level b { background-color: var(--level-light); color: var(--level-text); border-color: var(--level-color); }
+        .rubric-table td.selected-level.lv1 { --level-color: #dc2626; --level-light: #fef2f2; --level-text: #991b1b; }
+        .rubric-table td.selected-level.lv2 { --level-color: #f97316; --level-light: #fff7ed; --level-text: #9a3412; }
+        .rubric-table td.selected-level.lv3 { --level-color: #eab308; --level-light: #fefce8; --level-text: #854d0e; }
+        .rubric-table td.selected-level.lv4 { --level-color: #84cc16; --level-light: #f7fee7; --level-text: #3f6212; }
+        .rubric-table td.selected-level.lv5 { --level-color: #16a34a; --level-light: #f0fdf4; --level-text: #166534; }
 
         /* Zengin Metin (Rich Text) Editörü Stilleri */
         .rte-container { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: 15px; background: white; transition: 0.2s; }
@@ -174,9 +181,9 @@
 @media print{.toolbar,.kidr,.draft,.chip,.claim,.sb-cmp{display:none!important}}
 
 .chk-item{cursor:pointer;border-left:5px solid var(--c);background:var(--bg0)!important;transition:.15s}.chk-item .likert-group{flex:none}.chk-item input{width:18px;height:18px;accent-color:var(--c);cursor:pointer}
-.chk-item.lv2{--c:#d97706;--bg0:#fffbeb;--bgon:#fde68a}.chk-item.lv3{--c:#0284c7;--bg0:#f0f9ff;--bgon:#bae6fd}.chk-item.lv4{--c:#65a30d;--bg0:#f7fee7;--bgon:#d9f99d}.chk-item.lv5{--c:#16a34a;--bg0:#f0fdf4;--bgon:#86efac}
+.chk-item.lv2{--c:#f97316;--bg0:#fff7ed;--bgon:#fed7aa}.chk-item.lv3{--c:#eab308;--bg0:#fefce8;--bgon:#fef08a}.chk-item.lv4{--c:#84cc16;--bg0:#f7fee7;--bgon:#d9f99d}.chk-item.lv5{--c:#16a34a;--bg0:#f0fdf4;--bgon:#86efac}
 .chk-item.on{background:var(--bgon)!important;box-shadow:0 0 0 2px var(--c) inset}
-.lvtag{font-size:.7rem;font-weight:800;padding:2px 7px;border-radius:10px;color:#fff;white-space:nowrap;background:#64748b}.lvtag.lv2{background:#d97706}.lvtag.lv3{background:#0284c7}.lvtag.lv4{background:#65a30d}.lvtag.lv5{background:#16a34a}
+.lvtag{font-size:.7rem;font-weight:800;padding:2px 7px;border-radius:10px;color:#fff;white-space:nowrap;background:#64748b}.lvtag.lv2{background:#f97316}.lvtag.lv3{background:#eab308;color:#422006}.lvtag.lv4{background:#84cc16}.lvtag.lv5{background:#16a34a}
 .sugg-det{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}.lnk{color:#6d28d9;text-decoration:underline;font-weight:600}a.od{text-decoration:none;cursor:pointer}a.od:hover{filter:brightness(.9);text-decoration:underline}
 </style>
 </head>
@@ -792,8 +799,9 @@ function init() {
                                 </div>
                             </div>
                             <div class="suggestion-box" id="sugg-box-${cleanId}">
-                                <div class="sugg-label">Sistem Önerisi</div>
+                                <div class="sugg-label">Takım Önerisi</div>
                                 <div class="sugg-value" id="sugg-val-${cleanId}">-</div>
+                                <div class="sugg-claim" id="sugg-claim-${cleanId}"></div>
                                 <button class="btn-apply-sugg" onclick="applySuggestion('${cleanId}')">Önerilen Puanı Uygula</button>
                             </div>
                         </div>
@@ -1123,10 +1131,10 @@ function selectScore(cleanId, score) {
     
     const table = document.getElementById(`rubric-${cleanId}`);
     if(table) {
-        table.querySelectorAll('td').forEach(td => td.classList.remove('selected-level'));
+            table.querySelectorAll('td').forEach(td => td.classList.remove('selected-level', 'lv1', 'lv2', 'lv3', 'lv4', 'lv5'));
         const cell = document.getElementById(`cell-${cleanId}-${score}`);
         if(score > 0 && cell) {
-            cell.classList.add('selected-level');
+            cell.classList.add('selected-level', `lv${score}`);
         }
     }
     
@@ -1135,9 +1143,9 @@ function selectScore(cleanId, score) {
     if(evBox && evLabel) {
         const colors = {
             5: { border: '#16a34a', bg: '#f0fdf4', text: '#166534' }, 
-            4: { border: '#84cc16', bg: '#ecfccb', text: '#3f6212' }, 
-            3: { border: '#0284c7', bg: '#e0f2fe', text: '#0369a1' }, 
-            2: { border: '#d97706', bg: '#fef3c7', text: '#92400e' }, 
+            4: { border: '#84cc16', bg: '#f7fee7', text: '#3f6212' },
+            3: { border: '#eab308', bg: '#fefce8', text: '#854d0e' },
+            2: { border: '#f97316', bg: '#fff7ed', text: '#9a3412' },
             1: { border: '#dc2626', bg: '#fef2f2', text: '#991b1b' }  
         };
         
@@ -1802,16 +1810,17 @@ function enhance(){
   const tb=document.createElement('div');tb.className='toolbar';
   tb.innerHTML=`<div class="prog"><div class="prog-bar"><div class="prog-fill" id="pf"></div></div><small id="pt"></small></div>
   <button class="tb-btn" onclick="toggleAll(true)">Tümünü Aç</button><button class="tb-btn" onclick="toggleAll(false)">Tümünü Kapat</button>
-  <button class="tb-btn" id="bk" onclick="document.querySelectorAll('.kidr').forEach(d=>d.open=!d.open)">Kurum Beyanlarını Aç/Kapat</button>
+    <button class="tb-btn" id="bk" onclick="document.querySelectorAll('.kidr').forEach(d=>d.open=!d.open)">Kurum KİDR Beyanlarını Aç/Kapat</button>
   <button class="tb-btn" id="bd" onclick="document.getElementById('main-content').classList.toggle('hide-done');this.classList.toggle('on')">Yalnızca Puanlanmamışlar</button>`;
   document.querySelector('.nav-panel').after(tb);
   items().forEach(it=>{const c=it.id.replace(/\./g,'-'),d=kidrData[it.id],box=document.getElementById('val-'+c).closest('.sub-item');
     it.claim=d?lvlOf(it,d.od):0;
-    const ttl=box.querySelector('.sub-title');ttl.innerHTML+=` ${it.claim?`<span class="claim">Kurum beyanı: S${it.claim}</span>`:''}<span class="chip" id="chip-${c}" style="display:none"></span>`;
+    const ttl=box.querySelector('.sub-title');ttl.innerHTML+=` ${it.claim?`<span class="claim">Kurum olgunluk puanı: S${it.claim}</span>`:''}<span class="chip" id="chip-${c}" style="display:none"></span>`;
+    document.getElementById(`sugg-claim-${c}`).innerHTML=`Kurum olgunluk puanı: <b>${it.claim?`S${it.claim}`:'Belirtilmemiş'}</b>`;
     if(!d)return;
     const ev=d.ev.length?`<ul class="ev-list">${d.ev.map(f=>`<li><span class="od d${f.l}">[${f.n}] OD${f.l}</span> ${f.u?`<a class="lnk" href="${escapeHtml(f.u)}" target="_blank" rel="noopener noreferrer">${escapeHtml(f.f)}</a>`:escapeHtml(f.f)}</li>`).join('')}</ul>`:'<div class="ev-none">⚠ Kurum bu ölçüt için kanıt dosyası listelememiştir.</div>';
     const p=document.createElement('details');p.className='kidr';
-    p.innerHTML=`<summary>Kurumun KİDR Beyanı ve Kanıtları (${d.ev.length} kanıt)</summary><div class="kidr-in">${d.od?`<div class="kidr-od">Kurumun bildirdiği olgunluk düzeyi: ${escapeHtml(d.od)}</div>`:''}${d.p.map(x=>`<p>${badge(x)}</p>`).join('')}<b>Kanıtlar</b>${ev}</div>`;
+    p.innerHTML=`<summary>Kurumun KİDR Beyanı ve Kanıtları (${d.ev.length} kanıt)</summary><div class="kidr-in">${d.od?`<div class="kidr-od">Kurum olgunluk puanının açıklaması: ${escapeHtml(d.od)}</div>`:''}${d.p.map(x=>`<p>${badge(x)}</p>`).join('')}<b>Kanıtlar</b>${ev}</div>`;
     box.querySelector('.interactive-panel').before(p)});
   const sl=document.getElementById('summary-list');sl.insertAdjacentHTML('afterend','<div class="sb-cmp" id="cmp"></div>');
   const dr=document.createElement('div');dr.className='draft';dr.id='draft';document.querySelector('.toolbar').after(dr);
@@ -1820,9 +1829,9 @@ function toggleAll(o){document.querySelectorAll('.sub-item').forEach(e=>e.classL
 function updateMeta(){let n=0,cs=0,cc=0,ss=0;
   items().forEach(it=>{const c=it.id.replace(/\./g,'-'),v=parseInt(document.getElementById('val-'+c)?.value)||0,box=document.getElementById('val-'+c)?.closest('.sub-item'),ch=document.getElementById('chip-'+c);
     box&&box.classList.toggle('done',v>0);if(v>0){n++;ss+=v}
-    if(ch){if(v&&it.claim){const df=v-it.claim;ch.style.display='';ch.className='chip '+(df>0?'up':df<0?'down':'eq');ch.textContent=`Siz: S${v} ${df>0?'▲ +'+df:df<0?'▼ '+df:'= beyanla uyumlu'}`;cs+=it.claim;cc++}else ch.style.display='none'}});
+    if(ch){if(v&&it.claim){const df=v-it.claim;ch.style.display='';ch.className='chip '+(df>0?'up':df<0?'down':'eq');ch.textContent=`Siz: S${v} ${df>0?'▲ +'+df:df<0?'▼ '+df:'= olgunluk puanıyla uyumlu'}`;cs+=it.claim;cc++}else ch.style.display='none'}});
   const t=items().length;document.getElementById('pf').style.width=(n/t*100)+'%';document.getElementById('pt').textContent=`${n} / ${t} ölçüt puanlandı`;
-  document.getElementById('cmp').innerHTML=cc?`Kurum beyanı ort.: <b>${(cs/cc).toFixed(2)}</b> · Değerlendirme ort.: <b>${(ss/n).toFixed(2)}</b> <br>Beyandan sapan ölçüt: <b>${document.querySelectorAll('.chip.up,.chip.down').length}</b>`:'Puanladıkça kurum beyanıyla karşılaştırma burada görünür.'}
+    document.getElementById('cmp').innerHTML=cc?`Kurum olgunluk puanı ort.: <b>${(cs/cc).toFixed(2)}</b> · Değerlendirme ort.: <b>${(ss/n).toFixed(2)}</b> <br>Olgunluk puanından farklı ölçüt: <b>${document.querySelectorAll('.chip.up,.chip.down').length}</b>`:'Puanladıkça kurum olgunluk puanıyla karşılaştırma burada görünür.'}
 const _ct=calculateTotal;calculateTotal=function(){_ct();if(document.getElementById('pf'))updateMeta()};
 const DK='kidr_draft_v1';let dt;
 function saveDraft(){clearTimeout(dt);dt=setTimeout(()=>{try{const d={t:Date.now(),no:document.getElementById('proj-no').value,nm:document.getElementById('proj-name').value,s:{},k:{},c:{},o:['summary','strengths','weaknesses'].map(x=>document.getElementById('overall-'+x).innerHTML)};
