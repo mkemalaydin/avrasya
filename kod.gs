@@ -132,7 +132,8 @@ function authorizeExternalRequest() {
 function safeFileName(name) {
   const map = {"ç":"c","Ç":"C","ğ":"g","Ğ":"G","ı":"i","İ":"I","ö":"o","Ö":"O","ş":"s","Ş":"S","ü":"u","Ü":"U"};
   const s = String(name || "kanit").replace(/[çÇğĞıİöÖşŞüÜ]/g, c => map[c]).replace(/[^A-Za-z0-9._-]+/g, "_");
-  return Utilities.formatDate(new Date(), "UTC", "yyyyMMdd-HHmmss") + "_" + s.slice(-80);
+  return Utilities.formatDate(new Date(), "UTC", "yyyyMMdd-HHmmss") + "_" +
+    Utilities.getUuid().replace(/-/g, "") + "_" + s.slice(-80);
 }
 
 function handleUpload(e) {
@@ -143,19 +144,34 @@ function handleUpload(e) {
     const f = JSON.parse(e.postData.contents);
     if (!f.data) throw new Error("Dosya verisi boş.");
     if (f.data.length > MAX_BASE64_LEN) throw new Error("Dosya çok büyük (en fazla ~20 MB).");
-    const path = UPLOAD_DIR + "/" + safeFileName(f.fileName);
-    const res = UrlFetchApp.fetch("https://api.github.com/repos/" + GITHUB_OWNER + "/" + GITHUB_REPO + "/contents/" + path, {
-      method: "put",
-      contentType: "application/json",
-      headers: {Authorization: "Bearer " + token, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"},
-      payload: JSON.stringify({message: "Kanıt yüklendi: " + path, content: f.data, branch: GITHUB_BRANCH}),
-      muteHttpExceptions: true
-    });
-    const code = res.getResponseCode();
-    if (code !== 201 && code !== 200) {
-      let msg = res.getContentText();
-      try { msg = JSON.parse(msg).message || msg; } catch (x) {}
-      throw new Error("GitHub " + code + ": " + msg);
+    const fileName = safeFileName(f.fileName);
+    const paths = [UPLOAD_DIR + "/" + fileName, fileName];
+    let path;
+    const lock = LockService.getScriptLock();
+    lock.waitLock(30000);
+    try {
+      for (let i = 0; i < paths.length; i++) {
+        path = paths[i];
+        const res = UrlFetchApp.fetch("https://api.github.com/repos/" + GITHUB_OWNER + "/" + GITHUB_REPO + "/contents/" + path, {
+          method: "put",
+          contentType: "application/json",
+          headers: {Authorization: "Bearer " + token, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"},
+          payload: JSON.stringify({message: "Kanıt yüklendi: " + path, content: f.data, branch: GITHUB_BRANCH}),
+          muteHttpExceptions: true
+        });
+        const code = res.getResponseCode();
+        if (code === 201 || code === 200) break;
+
+        let msg = res.getContentText();
+        try { msg = JSON.parse(msg).message || msg; } catch (x) {}
+        const directoryConflict = code === 409 &&
+          msg.toLowerCase().indexOf("file exists where") !== -1 &&
+          msg.toLowerCase().indexOf("create a subdirectory") !== -1;
+        if (directoryConflict && i === 0) continue;
+        throw new Error("GitHub " + code + ": " + msg);
+      }
+    } finally {
+      lock.releaseLock();
     }
     const isImg = String(f.mimeType || "").indexOf("image/") === 0;
     const base = GITHUB_OWNER + "/" + GITHUB_REPO;
