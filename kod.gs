@@ -121,7 +121,7 @@ function doPost(e) {
 const GITHUB_OWNER  = "mkemalaydin";
 const GITHUB_REPO   = "avrasya";
 const GITHUB_BRANCH = "main";
-const UPLOAD_DIR    = "kanitlar";
+const UPLOAD_DIR    = "yuklenen_kanitlar";
 const MAX_BASE64_LEN = 27000000; // yaklaşık 20 MB dosya
 
 // Apps Script düzenleyicisinden bir kez çalıştırıp harici istek iznini onaylayın.
