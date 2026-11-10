@@ -124,6 +124,11 @@ const GITHUB_BRANCH = "main";
 const UPLOAD_DIR    = "kanitlar";
 const MAX_BASE64_LEN = 27000000; // yaklaşık 20 MB dosya
 
+// Apps Script düzenleyicisinden bir kez çalıştırıp harici istek iznini onaylayın.
+function authorizeExternalRequest() {
+  UrlFetchApp.fetch("https://api.github.com/");
+}
+
 function safeFileName(name) {
   const map = {"ç":"c","Ç":"C","ğ":"g","Ğ":"G","ı":"i","İ":"I","ö":"o","Ö":"O","ş":"s","Ş":"S","ü":"u","Ü":"U"};
   const s = String(name || "kanit").replace(/[çÇğĞıİöÖşŞüÜ]/g, c => map[c]).replace(/[^A-Za-z0-9._-]+/g, "_");
