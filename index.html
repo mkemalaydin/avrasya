@@ -244,9 +244,7 @@
 // ==========================================
 // KENDİ WEB APP URL'Nİ BURAYA YAPIŞTIR
 // ==========================================
-const GOOGLE_APP_URL = "https://script.google.com/macros/s/AKfycbzP5bYAZ8b9n6mb2AJaPINueag68vkctecfFZKfQzRtlXFydByp9zn3xy7BONbhLHYLNg/exec";
-const IMGBB_API_KEY = "cbc42adcd1c112c6d5a9e92eaedc4c56";
-const IMGBB_UPLOAD_URL = "https://api.imgbb.com/1/upload";
+const GOOGLE_APP_URL = "https://script.google.com/macros/s/AKfycbyY3yyEkzYZiIHV9eWI6aPJkOPKEDzmQ90hk0dotOe8rTv65M2zseZg1IbKWaC_WqYxzg/exec";
 
 let currentAttachments = {};
 let activeEvidenceBox = null;
@@ -909,13 +907,13 @@ function handleFileUpload(input, cleanId) {
                     title: file.name,
                     src: e.target.result,
                     url: null,
-                    status: IMGBB_API_KEY && !IMGBB_API_KEY.includes('BURAYA') ? 'uploading' : 'pending'
+                    status: true ? 'uploading' : 'pending'
                 };
                 currentAttachments[cleanId].push(attachment);
                 renderPreviews(cleanId);
 
-                if (IMGBB_API_KEY && !IMGBB_API_KEY.includes('BURAYA')) {
-                    uploadImageToImgbb(attachment, cleanId);
+                if (true) {
+                    uploadAttachment(attachment, cleanId);
                 }
             } else if (file.type === 'application/pdf') {
                 const attachment = {
@@ -927,49 +925,15 @@ function handleFileUpload(input, cleanId) {
                 };
                 currentAttachments[cleanId].push(attachment);
                 renderPreviews(cleanId);
-                uploadFileToDrive(attachment, cleanId, file.type);
+                uploadAttachment(attachment, cleanId, file.type);
             }
         };
         reader.readAsDataURL(file);
     });
 }
 
-function uploadImageToImgbb(attachment, cleanId) {
-    const base64 = attachment.src.split(',')[1] || '';
-    const params = new URLSearchParams();
-    params.append('key', IMGBB_API_KEY);
-    params.append('image', base64);
-    params.append('name', attachment.title.replace(/\.[^/.]+$/, ''));
-
-    fetch(IMGBB_UPLOAD_URL, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: params.toString()
-    })
-    .then(res => {
-        return res.json();
-    })
-    .then(data => {
-        if (data && data.success && data.data && data.data.url) {
-            attachment.url = data.data.url;
-            attachment.status = 'done';
-        } else {
-            attachment.status = 'error';
-            console.error('imgbb upload error', data);
-            alert('ImgBB görsel yükleme hatası: ' + ((data && data.error && data.error.message) || 'bilinmeyen hata') + '\n(API anahtarını kontrol edin)');
-        }
-        renderPreviews(cleanId);
-    })
-    .catch(err => {
-        attachment.status = 'error';
-        console.error('imgbb upload failed', err);
-        renderPreviews(cleanId);
-    });
-}
-
-function uploadFileToDrive(attachment, cleanId, mimeType) {
+function uploadAttachment(attachment, cleanId, mimeType) {
+    mimeType = mimeType || ((attachment.src.match(/^data:([^;]+)/) || [])[1]) || 'application/octet-stream';
     const base64 = attachment.src.split(',')[1] || '';
     const fileEntry = {
         fileName: attachment.title,
@@ -994,14 +958,14 @@ function uploadFileToDrive(attachment, cleanId, mimeType) {
             attachment.status = 'done';
         } else {
             attachment.status = 'error';
-            console.error('Drive upload error', data);
-            alert('PDF yükleme hatası: ' + ((data && data.message) || 'bilinmeyen hata'));
+            console.error('Yükleme hatası', data);
+            alert('Dosya yükleme hatası: ' + ((data && data.message) || 'bilinmeyen hata'));
         }
         renderPreviews(cleanId);
     })
     .catch(err => {
         attachment.status = 'error';
-        console.error('Drive upload failed', err);
+        console.error('Yükleme başarısız', err);
         renderPreviews(cleanId);
     });
 }
@@ -1758,7 +1722,7 @@ document.addEventListener('paste', function(e) {
                 title: file.name || (file.type.startsWith('image/') ? 'clipboard-image.png' : 'clipboard-document.pdf'),
                 src: '',
                 url: null,
-                status: IMGBB_API_KEY && !IMGBB_API_KEY.includes('BURAYA') ? 'uploading' : 'pending'
+                status: true ? 'uploading' : 'pending'
             };
             currentAttachments[cleanId].push(attachment);
             renderPreviews(cleanId);
@@ -1769,11 +1733,11 @@ document.addEventListener('paste', function(e) {
                 renderPreviews(cleanId);
 
                 if (attachment.type === 'image') {
-                    if (IMGBB_API_KEY && !IMGBB_API_KEY.includes('BURAYA')) {
-                        uploadImageToImgbb(attachment, cleanId);
+                    if (true) {
+                        uploadAttachment(attachment, cleanId);
                     }
                 } else {
-                    uploadFileToDrive(attachment, cleanId, file.type);
+                    uploadAttachment(attachment, cleanId, file.type);
                 }
             };
             reader.readAsDataURL(file);
