@@ -185,6 +185,13 @@
 .chk-item.on{background:var(--bgon)!important;box-shadow:0 0 0 2px var(--c) inset}
 .lvtag{font-size:.7rem;font-weight:800;padding:2px 7px;border-radius:10px;color:#fff;white-space:nowrap;background:#64748b}.lvtag.lv2{background:#f97316}.lvtag.lv3{background:#eab308;color:#422006}.lvtag.lv4{background:#84cc16}.lvtag.lv5{background:#16a34a}
 .sugg-det{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}.lnk{color:#6d28d9;text-decoration:underline;font-weight:600}a.od{text-decoration:none;cursor:pointer}a.od:hover{filter:brightness(.9);text-decoration:underline}
+
+.chk-wrap{margin-bottom:6px}.chk-no{font-size:.72rem;font-weight:800;color:#475569;background:#e2e8f0;border-radius:6px;padding:1px 6px;white-space:nowrap}
+.chk-ev{display:none;margin:0 0 6px 26px;padding:8px 10px;background:#f8fafc;border:1px dashed #94a3b8;border-top:0;border-radius:0 0 8px 8px}.chk-item.on+.chk-ev{display:block}
+.chk-ev-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.8rem}.chk-ev-row input[type=text]{flex:1;min-width:140px;padding:5px 8px;border:1px solid var(--border);border-radius:6px}.chk-ev-row button{background:var(--accent);color:#fff;border:0;border-radius:6px;padding:5px 10px;cursor:pointer}
+.gen-title{font-weight:700;font-size:.85rem;color:#475569}
+.auto-box{border-radius:10px;padding:12px 16px;margin-top:10px;font-size:.88rem}.auto-box.ok{background:#f0fdf4;border:1px solid #bbf7d0}.auto-box.bad{background:#fef2f2;border:1px solid #fecaca}.auto-box ul{margin:4px 0 10px 18px;padding:0}.auto-h{font-weight:700;margin-top:8px}.auto-t{font-weight:800}
+@media print{.chk-ev{display:none!important}}
 </style>
 </head>
 <body>
@@ -414,7 +421,7 @@ const rubricData = [
         ]
     },
     {
-        title: "B.2. Programların Yürütülmesi", maxWeight: 80,
+        title: "B.2. Programların Yürütülmesi (Öğrenci Merkezli Öğrenme, Öğretme ve Değerlendirme)", maxWeight: 80,
         items: [
             {
                 id: "B.2.1", name: "Öğretim yöntem ve teknikleri",
@@ -470,7 +477,7 @@ const rubricData = [
                 ]
             },
             {
-                id: "B.2.3", name: "Öğrenci kabulü ve önceki öğrenmenin tanınması",
+                id: "B.2.3", name: "Öğrenci kabulü, önceki öğrenmenin tanınması ve kredilendirilmesi",
                 levels: [
                     "Kurumda öğrenci kabulü, önceki öğrenmenin tanınması ve kredilendirilmesine ilişkin süreçler tanımlanmamıştır.",
                     "Kurumda öğrenci kabulü, önceki öğrenmenin tanınması ve kredilendirilmesine ilişkin ilke, kural ve bağlı planlar bulunmaktadır.",
@@ -522,7 +529,7 @@ const rubricData = [
         ]
     },
     {
-        title: "B.3. Öğrenme Kaynakları ve Destek Hizmetleri", maxWeight: 80,
+        title: "B.3. Öğrenme Kaynakları ve Akademik Destek Hizmetleri", maxWeight: 80,
         items: [
             {
                 id: "B.3.1", name: "Öğrenme ortam ve kaynakları",
@@ -657,7 +664,7 @@ const rubricData = [
         title: "B.4. Öğretim Kadrosu", maxWeight: 100,
         items: [
             {
-                id: "B.4.1", name: "Atama, yükseltme ve görevlendirme",
+                id: "B.4.1", name: "Atama, yükseltme ve görevlendirme kriterleri",
                 levels: [
                     "Kurumun atama, yükseltme ve görevlendirme kriterleri tanımlanmamış.",
                     "Kurumun atama yükseltme ve görevlendirme kriterleri tanımlanmış; ancak uygulama sonuçları irdelenmemiştir.",
@@ -780,7 +787,7 @@ function init() {
                 btns += `<button class="btn-score" id="btn-${cleanId}-${i}" onclick="selectScore('${cleanId}', ${i})">${i}</button>`;
             }
 
-            let checkHtml = item.checks.map((chk, cIdx) => { const lv = CHK_LV[item.id][cIdx]; return `<label class="check-item chk-item lv${lv}"><span class="likert-group"><input type="checkbox" class="chk" name="L-${cleanId}-${cIdx}" id="L-${cleanId}-${cIdx}-${lv}" value="${lv}" onchange="calculateSuggestion('${cleanId}')"></span><span class="check-text">${chk}</span><span class="lvtag lv${lv}">S${lv}</span></label>`; }).join('');
+            let checkHtml = item.checks.map((chk, cIdx) => { const lv = CHK_LV[item.id][cIdx]; const no = `${item.id}.${cIdx+1}`; return `<div class="chk-wrap"><label class="check-item chk-item lv${lv}"><span class="likert-group"><input type="checkbox" class="chk" name="L-${cleanId}-${cIdx}" id="L-${cleanId}-${cIdx}-${lv}" value="${lv}" onchange="onChk('${cleanId}',${cIdx},this)"></span><span class="chk-no">${no}</span><span class="check-text">${chk}</span><span class="lvtag lv${lv}">S${lv}</span></label><div class="chk-ev" data-c="${cleanId}" data-k="${cIdx}"><div class="chk-ev-row"><span>📎 Kanıt (${no}):</span><input type="text" id="url-input-${cleanId}-${cIdx}" placeholder="https://..."><button type="button" onclick="addEvidenceLink('${cleanId}',${cIdx})">Link Ekle</button><input type="file" multiple accept="image/png,image/jpeg,application/pdf" onchange="handleFileUpload(this,'${cleanId}',${cIdx});this.value=''"></div><div class="preview-container" id="pc-${cleanId}-${cIdx}"></div></div></div>`; }).join('');
 
             secBody.innerHTML += `
                 <div class="sub-item collapsed">
@@ -827,15 +834,7 @@ function init() {
                             <div class="comment-area" id="comment-${cleanId}" contenteditable="true" data-placeholder="Değerlendirme gerekçenizi buraya yazınız..."></div>
                         </div>
                         
-                        <div class="evidence-box" id="evidence-box-${cleanId}">
-                            <label id="evidence-label-${cleanId}">Kanıt Dosyası (PDF/Görsel) veya URL Ekle — Dosya seçin ya da Ctrl+V ile yapıştırın:</label>
-                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                                <input type="text" id="url-input-${cleanId}" placeholder="https://..." style="flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: 6px; outline: none;">
-                                <button type="button" onclick="addEvidenceLink('${cleanId}')" style="background: var(--accent); color: white; border: none; padding: 0 15px; border-radius: 6px; font-weight: bold; cursor: pointer;">URL Ekle</button>
-                            </div>
-                            <input type="file" multiple accept="image/png,image/jpeg,application/pdf" onchange="handleFileUpload(this, '${cleanId}')">
-                            <div class="preview-container" id="preview-container-${cleanId}"></div>
-                        </div>
+                        <div class="evidence-box" id="evidence-box-${cleanId}" style="display:none"><label id="evidence-label-${cleanId}" style="display:none"></label><div class="gen-title">Genel kanıtlar (bir ifadeye bağlı olmayan)</div><div class="preview-container" id="preview-container-${cleanId}"></div></div>
 
                         <input type="hidden" class="score-val" id="val-${cleanId}" value="0">
                     </div>
@@ -895,7 +894,7 @@ function init() {
     loadProjectList();
 }
 
-function handleFileUpload(input, cleanId) {
+function handleFileUpload(input, cleanId, chk) {
     if (!currentAttachments[cleanId]) currentAttachments[cleanId] = [];
 
     Array.from(input.files).forEach(file => {
@@ -903,7 +902,7 @@ function handleFileUpload(input, cleanId) {
         reader.onload = function(e) {
             if (file.type.startsWith('image/')) {
                 const attachment = {
-                    type: 'image',
+                    type: 'image', chk: chk,
                     title: file.name,
                     src: e.target.result,
                     url: null,
@@ -917,7 +916,7 @@ function handleFileUpload(input, cleanId) {
                 }
             } else if (file.type === 'application/pdf') {
                 const attachment = {
-                    type: 'pdf',
+                    type: 'pdf', chk: chk,
                     title: file.name,
                     src: e.target.result,
                     url: null,
@@ -970,8 +969,8 @@ function uploadAttachment(attachment, cleanId, mimeType) {
     });
 }
 
-function addEvidenceLink(cleanId) {
-    const input = document.getElementById(`url-input-${cleanId}`);
+function addEvidenceLink(cleanId, chk) {
+    const input = document.getElementById(`url-input-${cleanId}-${chk}`);
     let url = input.value.trim();
     if (!url) return;
 
@@ -983,6 +982,7 @@ function addEvidenceLink(cleanId) {
     if (!currentAttachments[cleanId]) currentAttachments[cleanId] = [];
     currentAttachments[cleanId].push({
         type: 'url',
+        chk: chk,
         title: title,
         url: url,
         src: url,
@@ -995,6 +995,7 @@ function addEvidenceLink(cleanId) {
 function renderPreviews(cleanId) {
     const container = document.getElementById(`preview-container-${cleanId}`);
     container.innerHTML = '';
+    document.querySelectorAll(`[id^="pc-${cleanId}-"]`).forEach(c => c.innerHTML = '');
 
     if (currentAttachments[cleanId]) {
         currentAttachments[cleanId].forEach((attachment, idx) => {
@@ -1037,7 +1038,7 @@ function renderPreviews(cleanId) {
                 <input type="text" value="${escapeHtml(attachment.title || '')}" onchange="updateAttachmentTitle('${cleanId}', ${idx}, this.value)" placeholder="Ek adı girin" style="width:100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; outline: none;" />
             `;
 
-            container.appendChild(wrap);
+            ((attachment.chk !== undefined && attachment.chk !== null && document.getElementById(`pc-${cleanId}-${attachment.chk}`)) || container).appendChild(wrap);
         });
     }
 }
@@ -1219,7 +1220,7 @@ function saveData() {
                 checks: [],
                 attachments: rawAttachments
                     .filter(att => att.url && (att.status === 'done' || typeof att.status === 'undefined'))
-                    .map(att => ({ type: att.type, title: att.title, url: att.url }))
+                    .map(att => ({ type: att.type, title: att.title, url: att.url, chk: att.chk }))
             };
             
             for(let i=0; i<item.checks.length; i++) {
@@ -1484,8 +1485,8 @@ function exportPDF() {
     });
     
     const summary = document.getElementById('overall-summary').innerHTML || '-';
-    const strengths = document.getElementById('overall-strengths').innerHTML || '-';
-    const weaknesses = document.getElementById('overall-weaknesses').innerHTML || '-';
+    const strengths = (document.getElementById('overall-strengths').innerHTML || '-') + ((document.getElementById('auto-strengths') || {}).innerHTML || '');
+    const weaknesses = (document.getElementById('overall-weaknesses').innerHTML || '-') + ((document.getElementById('auto-weak') || {}).innerHTML || '');
     
     reportHTML += `
         <div class="pdf-section" style="margin-top: 40px;">
@@ -1691,33 +1692,34 @@ document.addEventListener('click', function(e) {
         window.open(link.href, '_blank');
     }
 
-    const evidence = e.target.closest('.evidence-box');
-    if (evidence && evidence.id) {
-        activeEvidenceBox = evidence.id.replace(/^evidence-box-/, '');
+    const evidence = e.target.closest('.chk-ev');
+    if (evidence) {
+        activeEvidenceBox = evidence.dataset.c + '|' + evidence.dataset.k;
     }
 });
 
 document.addEventListener('focusin', function(e) {
-    const evidence = e.target.closest('.evidence-box');
-    if (evidence && evidence.id) {
-        activeEvidenceBox = evidence.id.replace(/^evidence-box-/, '');
+    const evidence = e.target.closest('.chk-ev');
+    if (evidence) {
+        activeEvidenceBox = evidence.dataset.c + '|' + evidence.dataset.k;
     }
 });
 
 document.addEventListener('paste', function(e) {
     const commentArea = e.target.closest('.comment-area');
-    const evidenceBox = e.target.closest('.evidence-box');
+    const evidenceBox = e.target.closest('.chk-ev');
     const clipboard = e.clipboardData || window.clipboardData;
     const items = Array.from((clipboard && clipboard.items) || []);
     const fileItem = items.find(item => item.type.startsWith('image/') || item.type === 'application/pdf');
 
     if (fileItem && (evidenceBox || activeEvidenceBox)) {
         e.preventDefault();
-        const cleanId = evidenceBox ? evidenceBox.id.replace(/^evidence-box-/, '') : activeEvidenceBox;
+        const [cleanId, chkIdx] = (evidenceBox ? evidenceBox.dataset.c + '|' + evidenceBox.dataset.k : activeEvidenceBox).split('|');
         const file = fileItem.getAsFile();
         if (file) {
             if (!currentAttachments[cleanId]) currentAttachments[cleanId] = [];
             const attachment = {
+                chk: +chkIdx,
                 type: file.type.startsWith('image/') ? 'image' : 'pdf',
                 title: file.name || (file.type.startsWith('image/') ? 'clipboard-image.png' : 'clipboard-document.pdf'),
                 src: '',
@@ -1806,7 +1808,30 @@ function showDraft(){try{const d=JSON.parse(localStorage.getItem(DK)||'null');if
 function restoreDraft(){const d=JSON.parse(localStorage.getItem(DK));document.getElementById('proj-no').value=d.no||'';document.getElementById('proj-name').value=d.nm||'';
   items().forEach(it=>{const c=it.id.replace(/\./g,'-');document.getElementById('comment-'+c).innerHTML=d.c[c]||'';(d.k[c]||[]).forEach((v,i)=>{if(+v){const r=document.getElementById(`L-${c}-${i}-${v}`);if(r)r.checked=true}});calculateSuggestion(c);if(+d.s[c])selectScore(c,+d.s[c])});
   ['summary','strengths','weaknesses'].forEach((x,i)=>document.getElementById('overall-'+x).innerHTML=d.o[i]||'');document.getElementById('draft').style.display='none'}
-window.onload=function(){init();enhance()};
+
+function onChk(c,k,el){
+  if(!el.checked){const has=(currentAttachments[c]||[]).some(a=>a.chk===k);
+    if(has){if(!confirm('Bu ifadenin işaretini kaldırırsanız ona yüklenen kanıtlar da listeden kaldırılır. Devam edilsin mi?')){el.checked=true;return}
+      currentAttachments[c]=currentAttachments[c].filter(a=>a.chk!==k);renderPreviews(c)}}
+  calculateSuggestion(c)}
+function buildAuto(){[['overall-strengths','auto-strengths','ok'],['overall-weaknesses','auto-weak','bad']].forEach(([a,b,cl])=>{const p=document.getElementById(a).closest('.rte-container');if(p&&!document.getElementById(b))p.insertAdjacentHTML('afterend',`<div class="auto-box ${cl}" id="${b}"></div>`)});refreshAuto()}
+let autoT;function scheduleAuto(){clearTimeout(autoT);autoT=setTimeout(refreshAuto,150)}
+function refreshAuto(){
+  const S=document.getElementById('auto-strengths'),W=document.getElementById('auto-weak');if(!S||!W)return;
+  let sh='',wh='',sn=0,wn=0;
+  items().forEach(it=>{const c=it.id.replace(/\./g,'-'),ins=[...document.querySelectorAll('input.chk[name^="L-'+c+'-"]')];
+    const sc=+((document.getElementById('val-'+c)||{}).value)||0;if(!ins.some(i=>i.checked)&&!sc)return;
+    const s=[],w=[];ins.forEach((i,k)=>{const no=it.id+'.'+(k+1);
+      if(i.checked){const ev=(currentAttachments[c]||[]).filter(a=>a.chk===k&&/^https?:/i.test(a.url||'')).map((a,n)=>`<a href="${escapeHtml(a.url)}" target="_blank" rel="noopener">📎${n+1}</a>`).join(' ');s.push(`<li><b>${no}</b> ${escapeHtml(it.checks[k])} ${ev}</li>`)}
+      else w.push(`<li><b>${no}</b> ${escapeHtml(it.checks[k])}</li>`)});
+    const head=`<div class="auto-h">${it.id} ${escapeHtml(it.name)} <small>(${s.length}/${ins.length} sağlanıyor)</small></div>`;
+    if(s.length){sh+=head+'<ul>'+s.join('')+'</ul>';sn+=s.length}
+    if(w.length){wh+=head+'<ul>'+w.join('')+'</ul>';wn+=w.length}});
+  S.innerHTML=`<div class="auto-t" style="color:#166534">İşaretlenen ifadelerden otomatik oluşan güçlü yönler (${sn})</div>`+(sh||'<i>Henüz işaretlenen ifade yok.</i>');
+  W.innerHTML=`<div class="auto-t" style="color:#991b1b">İşaretlenmeyen ifadelerden otomatik oluşan gelişmeye açık yönler (${wn})</div>`+(wh||'<i>Henüz değerlendirilen ölçüt yok.</i>')}
+const _cs=calculateSuggestion;calculateSuggestion=function(c){_cs(c);scheduleAuto()};
+const _rp=renderPreviews;renderPreviews=function(c){_rp(c);const g=document.getElementById('evidence-box-'+c),p=document.getElementById('preview-container-'+c);if(g&&p)g.style.display=p.children.length?'block':'none';scheduleAuto()};
+window.onload=function(){init();enhance();buildAuto()};
 
 </script>
 </body>
